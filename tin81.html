@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Kiểm Tra Trắc Nghiệm Tin Học 8</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkbg: '#0b0f19',
+                        cardbg: '#151c2c',
+                        accent: '#38bdf8',
+                        accentHover: '#0284c7'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti Library for Gamified Rewards -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            user-select: none;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b0f19;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #334155;
+        }
+        .glow-effect {
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.15);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-white">
+
+    <!-- Header Page -->
+    <header class="bg-slate-900/90 border-b border-slate-800 backdrop-blur sticky top-0 z-40 px-4 py-3 shadow-lg">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="p-2.5 bg-gradient-to-tr from-cyan-600 to-indigo-600 rounded-xl text-white font-bold text-xl shadow-md">
+                    <i class="fa-solid fa-award"></i>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-base sm:text-lg text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-300 leading-tight">
+                        BÀI KIỂM TRA TIN HỌC 8
+                    </h1>
+                    <p class="text-xs text-slate-400 font-medium">Thử Thách Kiến Thức Chủ Đề 1 & Chủ Đề 2</p>
+                </div>
+            </div>
+
+            <!-- Header Info Right Side -->
+            <div class="flex items-center space-x-3 sm:space-x-4">
+                <!-- Đồng hồ đếm ngược -->
+                <div id="header-timer" class="hidden items-center space-x-2 bg-slate-950/80 px-3.5 py-1.5 rounded-xl border border-amber-500/40 text-amber-400 font-mono text-base font-bold shadow-inner">
+                    <i class="fa-regular fa-clock animate-pulse"></i>
+                    <span id="timer-display">20:00</span>
+                </div>
+
+                <!-- Thông tin học sinh ở góc bên phải trên cùng -->
+                <div id="student-badge" class="hidden items-center space-x-2.5 bg-slate-800/80 px-3.5 py-1.5 rounded-xl border border-slate-700/80 shadow-sm">
+                    <div class="w-8 h-8 rounded-lg bg-indigo-500/20 border border-indigo-400/30 flex items-center justify-center text-indigo-400 font-bold text-xs">
+                        <i class="fa-solid fa-user-graduate"></i>
+                    </div>
+                    <div class="text-xs text-right">
+                        <div id="badge-name" class="font-bold text-slate-100 max-w-[120px] sm:max-w-[180px] truncate">--</div>
+                        <div id="badge-class" class="text-slate-400 text-[11px]">--</div>
+                    </div>
+                </div>
+
+                <!-- Cài đặt Sheet -->
+                <button onclick="openSettingsModal()" class="p-2 text-slate-400 hover:text-cyan-400 hover:bg-slate-800 rounded-xl transition" title="Cấu hình Google Sheet">
+                    <i class="fa-solid fa-gear text-lg"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto w-full p-4 flex-grow flex flex-col justify-center">
+
+        <!-- 1. MÀN HÌNH NHẬP THÔNG TIN (Start Screen) -->
+        <div id="screen-start" class="max-w-lg mx-auto w-full bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl my-6 relative overflow-hidden">
+            <div class="absolute -top-12 -right-12 w-32 h-32 bg-cyan-500/10 rounded-full blur-xl pointer-events-none"></div>
+            <div class="absolute -bottom-12 -left-12 w-32 h-32 bg-indigo-500/10 rounded-full blur-xl pointer-events-none"></div>
+
+            <div class="text-center mb-6">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-tr from-cyan-500/20 to-indigo-500/20 text-cyan-400 rounded-2xl mb-3 text-2xl border border-cyan-500/30 shadow-lg">
+                    <i class="fa-solid fa-file-signature"></i>
+                </div>
+                <h2 class="text-2xl font-extrabold text-white mb-1">Xác Nhận Thông Tin</h2>
+                <p class="text-slate-400 text-sm">Điền họ tên và lớp để bắt đầu thực hiện bài kiểm tra</p>
+            </div>
+
+            <form id="start-form" onsubmit="handleStartQuiz(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">Họ và tên học sinh <span class="text-rose-400">*</span></label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                            <i class="fa-solid fa-user text-sm"></i>
+                        </span>
+                        <input type="text" id="input-name" required placeholder="Nhập họ và tên học sinh..." class="w-full pl-10 pr-4 py-3 bg-slate-950 border border-slate-800 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-slate-100 placeholder-slate-500 text-sm outline-none transition">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">Lớp học <span class="text-rose-400">*</span></label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                            <i class="fa-solid fa-users text-sm"></i>
+                        </span>
+                        <input type="text" id="input-class" required placeholder="Ví dụ: 8A1" class="w-full pl-10 pr-4 py-3 bg-slate-950 border border-slate-800 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-slate-100 placeholder-slate-500 text-sm outline-none transition">
+                    </div>
+                </div>
+
+                <!-- Quy định bài kiểm tra -->
+                <div class="bg-slate-950/80 p-4 rounded-xl border border-slate-800 text-xs text-slate-300 space-y-2">
+                    <div class="flex items-center text-cyan-400 font-bold mb-1">
+                        <i class="fa-solid fa-circle-info mr-2 text-sm"></i> Quy định bài kiểm tra:
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 text-slate-300">
+                        <div class="flex items-center space-x-1.5">
+                            <i class="fa-solid fa-list-ol text-cyan-400"></i>
+                            <span>Số lượng: <strong>25 câu hỏi</strong></span>
+                        </div>
+                        <div class="flex items-center space-x-1.5">
+                            <i class="fa-solid fa-bullseye text-emerald-400"></i>
+                            <span>Điểm tối đa: <strong>10 điểm</strong></span>
+                        </div>
+                        <div class="flex items-center space-x-1.5">
+                            <i class="fa-solid fa-stopwatch text-amber-400"></i>
+                            <span>Thời gian: <strong>20 phút</strong></span>
+                        </div>
+                        <div class="flex items-center space-x-1.5">
+                            <i class="fa-solid fa-layer-group text-indigo-400"></i>
+                            <span>Phân hóa: <strong>Dễ, Vừa, Khó (30%)</strong></span>
+                        </div>
+                    </div>
+                    <p class="text-slate-400 italic text-[11px] pt-1 border-t border-slate-800">
+                        • Mỗi câu đúng đạt 0.4 điểm. Dữ liệu nộp bài sẽ tự động đồng bộ lên hệ thống.
+                    </p>
+                </div>
+
+                <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-cyan-600 via-indigo-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold rounded-xl shadow-lg shadow-cyan-600/20 transition transform active:scale-98 flex items-center justify-center space-x-2 text-sm">
+                    <span>BẮT ĐẦU LÀM BÀI</span>
+                    <i class="fa-solid fa-circle-arrow-right"></i>
+                </button>
+            </form>
+        </div>
+
+        <!-- 2. MÀN HÌNH LÀM BÀI (Quiz Screen) -->
+        <div id="screen-quiz" class="hidden grid grid-cols-1 lg:grid-cols-4 gap-6 my-2">
+            <!-- Cột trái: Nội dung câu hỏi (Chiếm 3/4) -->
+            <div class="lg:col-span-3 space-y-4">
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl relative min-h-[420px] flex flex-col justify-between">
+                    <div>
+                        <!-- Tiến trình + Huy hiệu độ khó -->
+                        <div class="flex flex-wrap justify-between items-center gap-2 mb-4 pb-3 border-b border-slate-800">
+                            <div class="flex items-center space-x-2">
+                                <span id="question-badge" class="px-3 py-1 bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 font-bold rounded-lg text-xs">
+                                    Câu 1/25
+                                </span>
+                                <span id="difficulty-badge" class="px-2.5 py-1 bg-slate-800 border border-slate-700 text-xs font-semibold rounded-lg">
+                                    --
+                                </span>
+                            </div>
+                            
+                            <div class="flex items-center space-x-3 text-xs text-slate-400 font-medium">
+                                <span>Đã chọn: <strong id="answered-count-text" class="text-cyan-400 font-bold text-sm">0</strong>/25</span>
+                            </div>
+                        </div>
+
+                        <!-- Thanh tiến trình thời gian/tiến độ -->
+                        <div class="w-full bg-slate-950 h-2 rounded-full overflow-hidden mb-6 border border-slate-800">
+                            <div id="progress-bar-fill" class="bg-gradient-to-r from-cyan-500 to-indigo-500 h-full w-0 transition-all duration-300"></div>
+                        </div>
+
+                        <!-- Nội dung câu hỏi (Cỡ chữ vừa vặn) -->
+                        <div class="mb-6">
+                            <h3 id="question-text" class="text-base sm:text-lg font-semibold text-slate-100 leading-snug">
+                                Nội dung câu hỏi sẽ hiển thị ở đây...
+                            </h3>
+                        </div>
+
+                        <!-- 4 Đáp án A B C D chia thành 2 cột -->
+                        <div id="options-container" class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                            <!-- JS tự động render các nút đáp án vào đây -->
+                        </div>
+                    </div>
+
+                    <!-- Nút Điều hướng Qua/Lại giữa các câu -->
+                    <div class="flex justify-between items-center pt-6 mt-6 border-t border-slate-800">
+                        <button id="btn-prev" onclick="navigateQuestion(-1)" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm rounded-xl transition flex items-center space-x-2 border border-slate-700">
+                            <i class="fa-solid fa-chevron-left text-xs"></i>
+                            <span>Câu Trước</span>
+                        </button>
+
+                        <button id="btn-next" onclick="navigateQuestion(1)" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm rounded-xl transition flex items-center space-x-2 shadow-lg shadow-indigo-600/20">
+                            <span>Câu Tiếp</span>
+                            <i class="fa-solid fa-chevron-right text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cột phải: Bảng chọn câu hỏi & Nộp bài (Chiếm 1/4) -->
+            <div class="lg:col-span-1 space-y-4">
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl sticky top-20">
+                    <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-3 flex items-center justify-between">
+                        <span>Bảng Trạng Thái Câu Hỏi</span>
+                        <i class="fa-solid fa-grip-vertical text-slate-500"></i>
+                    </h4>
+
+                    <!-- Chú thích trạng thái -->
+                    <div class="grid grid-cols-3 gap-1 text-[11px] text-slate-400 mb-4 bg-slate-950 p-2 rounded-xl border border-slate-800 text-center">
+                        <div class="flex flex-col items-center">
+                            <span class="w-3 h-3 bg-slate-800 border border-slate-700 rounded-md inline-block mb-1"></span>
+                            <span>Chưa làm</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <span class="w-3 h-3 bg-cyan-600 rounded-md inline-block mb-1"></span>
+                            <span>Đã làm</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <span class="w-3 h-3 bg-indigo-500 ring-2 ring-indigo-400 rounded-md inline-block mb-1"></span>
+                            <span>Đang chọn</span>
+                        </div>
+                    </div>
+
+                    <!-- Bảng 25 nút chọn câu hỏi -->
+                    <div id="question-grid" class="grid grid-cols-5 gap-2 mb-5 max-h-[260px] overflow-y-auto pr-1">
+                        <!-- JS sẽ tạo 25 nút -->
+                    </div>
+
+                    <!-- Nút Nộp Bài được đặt ngay bên dưới Bảng chọn câu hỏi -->
+                    <button onclick="confirmSubmission()" class="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold rounded-xl shadow-lg shadow-emerald-600/20 transition flex items-center justify-center space-x-2 text-sm uppercase tracking-wider">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>NỘP BÀI KIỂM TRA</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. MÀN HÌNH KẾT QUẢ (Result Screen) -->
+        <div id="screen-result" class="hidden max-w-4xl mx-auto w-full my-6 space-y-6">
+            <!-- Thẻ tổng kết điểm -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl text-center relative overflow-hidden">
+                <div class="absolute -top-16 -right-16 w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl"></div>
+
+                <!-- Danh hiệu hoàn thành -->
+                <div id="result-rank-badge" class="inline-flex items-center px-4 py-1.5 rounded-full text-xs font-extrabold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 mb-3">
+                    <i class="fa-solid fa-trophy mr-1.5 text-amber-400"></i> HOÀN THÀNH BÀI KIỂM TRA
+                </div>
+
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-white mb-1">Kết Quả Bài Kiểm Tra</h2>
+                <p id="result-student-info" class="text-slate-400 text-sm mb-6">Học sinh: -- | Lớp: --</p>
+
+                <!-- Các chỉ số kết quả -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3.5 max-w-3xl mx-auto mb-6">
+                    <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl">
+                        <div class="text-[11px] text-slate-400 uppercase font-bold mb-1">Tổng Điểm</div>
+                        <div id="res-score" class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">0 / 10</div>
+                    </div>
+                    <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl">
+                        <div class="text-[11px] text-slate-400 uppercase font-bold mb-1">Số Câu Đúng</div>
+                        <div id="res-correct" class="text-3xl font-black text-emerald-400">0 / 25</div>
+                    </div>
+                    <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl">
+                        <div class="text-[11px] text-slate-400 uppercase font-bold mb-1">Thời Gian Làm</div>
+                        <div id="res-time" class="text-3xl font-black text-amber-400">00:00</div>
+                    </div>
+                    <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl">
+                        <div class="text-[11px] text-slate-400 uppercase font-bold mb-1">Số Lần Luyện Tập</div>
+                        <div id="res-attempts" class="text-3xl font-black text-purple-400">1</div>
+                    </div>
+                </div>
+
+                <!-- Trạng thái gửi dữ liệu Google Sheet -->
+                <div id="sheet-status" class="inline-flex items-center px-4 py-2 rounded-xl text-xs font-semibold bg-slate-950 border border-slate-800 text-slate-300">
+                    <i class="fa-solid fa-spinner animate-spin text-cyan-400 mr-2"></i>
+                    <span>Đang mã hóa Base64 và gửi kết quả lên Google Sheet...</span>
+                </div>
+
+                <div class="mt-6 flex justify-center space-x-4">
+                    <button onclick="restartQuiz()" class="px-6 py-3 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-bold rounded-xl shadow-lg transition flex items-center space-x-2 text-sm">
+                        <i class="fa-solid fa-rotate-right"></i>
+                        <span>Thực Hiện Lại Bài Kiểm Tra</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Chi tiết đáp án từng câu sau khi nộp bài -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+                <h3 class="text-base sm:text-lg font-bold text-slate-100 flex items-center space-x-2 border-b border-slate-800 pb-3">
+                    <i class="fa-solid fa-list-check text-cyan-400"></i>
+                    <span>Chi Tiết Đáp Án & Giải Thích Chi Tiết</span>
+                </h3>
+
+                <div id="review-list" class="space-y-4">
+                    <!-- Danh sách câu trả lời & đáp án đúng hiển thị ở đây -->
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Modal Cấu Hình Google Sheet (Mật khẩu: minhtran) -->
+    <div id="modal-settings" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-2xl p-6 shadow-2xl relative">
+            <button onclick="closeSettingsModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <h3 class="text-base font-bold text-white mb-4 flex items-center space-x-2">
+                <i class="fa-solid fa-sliders text-cyan-400"></i>
+                <span>Cấu Hình Google Sheet Web App</span>
+            </h3>
+
+            <!-- Bước 1: Nhập mật khẩu minhtran -->
+            <div id="settings-auth-step" class="space-y-4">
+                <p class="text-xs text-slate-400">Nhập mật khẩu quản trị để chỉnh sửa đường dẫn gửi dữ liệu.</p>
+                <div>
+                    <input type="password" id="settings-password" placeholder="Nhập mật khẩu..." class="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 text-sm outline-none focus:border-cyan-500">
+                    <p id="password-error" class="text-rose-400 text-xs mt-1.5 hidden">Mật khẩu không đúng! Vui lòng thử lại.</p>
+                </div>
+                <button onclick="verifyAdminPassword()" class="w-full py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-xl text-sm transition">
+                    Xác Nhận Mật Khẩu
+                </button>
+            </div>
+
+            <!-- Bước 2: Cài đặt URL Web App -->
+            <div id="settings-config-step" class="hidden space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1">URL Web App Google Apps Script</label>
+                    <textarea id="settings-url" rows="3" class="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 text-xs font-mono outline-none focus:border-cyan-500"></textarea>
+                </div>
+                <button onclick="saveSettings()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-sm transition">
+                    Lưu Cấu Hình
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Xác Nhận Nộp Bài -->
+    <div id="modal-confirm" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-2xl p-6 shadow-2xl text-center space-y-4">
+            <div class="w-12 h-12 bg-amber-500/10 text-amber-400 rounded-2xl flex items-center justify-center mx-auto text-xl border border-amber-500/20">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 class="text-lg font-bold text-white">Xác Nhận Nộp Bài?</h3>
+            <p id="confirm-unanswered-msg" class="text-xs text-slate-300 leading-relaxed">
+                Bạn đã hoàn thành <span id="confirm-count" class="text-cyan-400 font-bold">0</span>/25 câu hỏi.
+            </p>
+            <div class="flex space-x-3 pt-2">
+                <button onclick="closeConfirmModal()" class="flex-1 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm rounded-xl transition border border-slate-700">
+                    Làm Tiếp
+                </button>
+                <button onclick="submitQuiz()" class="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm rounded-xl transition shadow-lg shadow-emerald-600/20">
+                    Nộp Bài
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 border-t border-slate-900 py-3 text-center text-xs text-slate-500">
+        Hệ Thống Kiểm Tra Trắc Nghiệm Tin Học Lớp 8 - Tối Ưu Hóa Trải Nghiệm Học Sinh
+    </footer>
+
+    <script>
+        // NGÂN HÀNG 100 CÂU HỎI TRẮC NGHIỆM TIN HỌC 8 (CHỦ ĐỀ 1 & CHỦ ĐỀ 2)
+        // Mức độ phân hóa: easy (Dễ), medium (Vừa), hard (Khó - 30%)
+        const QUESTION_BANK = [
+            // DỄ (Easy) - 35 câu
+            { id: 1, level: "easy", q: "Công cụ tính toán đầu tiên của con người là gì?", a: ["Bàn tính", "10 ngón tay", "Máy Pascaline", "Máy Mark I"], c: 1, e: "Các phép tính ban đầu được con người thực hiện dựa vào 10 ngón tay." },
+            { id: 2, level: "easy", q: "Từ 'digit' trong tiếng Anh có nguồn gốc từ 'digitus' trong tiếng Latinh, nghĩa là gì?", a: ["Con số", "Bàn tính", "Ngón tay", "Máy tính"], c: 2, e: "Digitus trong tiếng Latinh có nghĩa gốc là ngón tay." },
+            { id: 3, level: "easy", q: "Bàn tính ra đời vào khoảng thời gian nào?", a: ["Hơn 2000 năm TCN", "Năm 1642", "Năm 1833", "Năm 1945"], c: 0, e: "Bàn tính cơ học xuất hiện từ hơn 2000 năm trước Công nguyên." },
+            { id: 4, level: "easy", q: "Ai được tôn vinh là 'cha đẻ của công nghệ máy tính'?", a: ["Blaise Pascal", "John Von Neumann", "Charles Babbage", "Howard Aiken"], c: 2, e: "Charles Babbage đề xuất thiết kế máy tính tự động đa năng đầu tiên." },
+            { id: 5, level: "easy", q: "Máy tính điện tử được chia thành mấy thế hệ phát triển?", a: ["3 thế hệ", "4 thế hệ", "5 thế hệ", "6 thế hệ"], c: 2, e: "Lịch sử máy tính điện tử chia thành 5 thế hệ chính." },
+            { id: 6, level: "easy", q: "Linh kiện điện tử cốt lõi của máy tính thế hệ thứ nhất là gì?", a: ["Bóng bán dẫn", "Đèn chân không", "Mạch IC", "Bộ vi xử lý"], c: 1, e: "Thế hệ thứ nhất (1945-1955) dùng đèn điện tử chân không." },
+            { id: 7, level: "easy", q: "Nguồn thông tin số được mã hóa dưới dạng dãy các chữ số nào?", a: ["0 và 1 (Dãy bit)", "1 và 2", "Từ A đến Z", "1 đến 10"], c: 0, e: "Thông tin số được biểu diễn bằng các dãy bit 0 và 1." },
+            { id: 8, level: "easy", q: "Linh kiện điện tử thay thế đèn chân không ở thế hệ thứ 2 là gì?", a: ["Mạch IC", "Bóng bán dẫn", "Bộ vi xử lý", "Mạch ULSI"], c: 1, e: "Thế hệ thứ hai sử dụng bóng bán dẫn nhỏ gọn và tiết kiệm điện." },
+            { id: 9, level: "easy", q: "Máy tính ENIAC là đại diện cho thế hệ máy tính nào?", a: ["Thế hệ thứ 1", "Thế hệ thứ 2", "Thế hệ thứ 3", "Thế hệ thứ 4"], c: 0, e: "ENIAC (1943-1946) thuộc thế hệ máy tính thứ nhất." },
+            { id: 10, level: "easy", q: "Đồng hồ thông minh đo nhịp tim là ứng dụng của máy tính trong lĩnh vực nào?", a: ["Giáo dục", "Y tế", "Quốc phòng", "Giao thông"], c: 1, e: "Thiết bị đeo theo dõi sức khỏe thuộc lĩnh vực y tế." },
+            { id: 11, level: "easy", q: "Công cụ nào giúp tìm kiếm thông tin nhanh nhất trên Internet?", a: ["Máy gõ chữ", "Máy tìm kiếm (Google)", "Bàn tính", "Sổ tay"], c: 1, e: "Máy tìm kiếm giúp tra cứu thông tin nhanh chóng trên môi trường số." },
+            { id: 12, level: "easy", q: "Thẻ đục lỗ là thiết bị vào/ra của thế hệ máy tính nào?", a: ["Thế hệ thứ 1", "Thế hệ thứ 4", "Thế hệ thứ 5", "Hiện đại"], c: 0, e: "Thẻ đục lỗ phổ biến ở thế hệ máy tính thứ nhất." },
+            { id: 13, level: "easy", q: "Thiết bị nào thuộc máy tính thế hệ thứ 5?", a: ["Điện thoại thông minh", "ENIAC", "IBM 360", "Minsk 22"], c: 0, e: "Smartphone tích hợp AI là sản phẩm thế hệ thứ 5." },
+            { id: 14, level: "easy", q: "Tính chất nào là của thông tin số khi chia sẻ qua mạng?", a: ["Dễ nhân bản, khó xóa sạch", "Tự biến mất sau 1 giờ", "Không thể copy", "Không thể gửi xa"], c: 0, e: "Thông tin số rất dễ sao chép và khó gỡ bỏ triệt để." },
+            { id: 15, level: "easy", q: "Hệ thống số thập phân sử dụng tập hợp chữ số nào?", a: ["0 và 1", "Từ 0 đến 9", "Từ 1 đến 10", "Từ A đến F"], c: 1, e: "Hệ thập phân gồm 10 chữ số từ 0 đến 9." },
+            { id: 16, level: "easy", q: "Thuật ngữ 'Bit' viết tắt từ cụm từ tiếng Anh nào?", a: ["Binary Digit", "Big Digit", "Byte Unit", "Basic Text"], c: 0, e: "Bit chính là Binary Digit (Chữ số nhị phân)." },
+            { id: 17, level: "easy", q: "Trang web uy tín nhất để kiểm tra lịch học của học sinh là gì?", a: ["Cổng thông tin Sở GD&ĐT", "Blog cá nhân", "Trang quảng cáo", "Diễn đàn game"], c: 0, e: "Nguồn chính thống từ cơ quan quản lý GD&ĐT có độ tin cậy cao nhất." },
+            { id: 18, level: "easy", q: "Khái niệm 'môi trường số' được tạo nên bởi yếu tố nào?", a: ["Các thiết bị kĩ thuật số và mạng", "Môi trường tự nhiên", "Sách in giấy", "Bảng phấn"], c: 0, e: "Môi trường số xây dựng dựa trên hạ tầng thiết bị số và kết nối mạng." },
+            { id: 19, level: "easy", q: "Khi chụp ảnh giấy bằng smartphone, em đã chuyển thành dạng dữ liệu nào?", a: ["Ảnh in", "Ảnh số", "Văn bản viết tay", "Ảnh cơ học"], c: 1, e: "Chụp ảnh qua smartphone sẽ mã hóa hình ảnh thành dạng ảnh số." },
+            { id: 20, level: "easy", q: "Đặc điểm về kích thước máy tính qua các thế hệ thay đổi ra sao?", a: ["To dần", "Nhỏ gọn dần", "Không đổi", "Lúc to lúc nhỏ"], c: 1, e: "Nhờ vi tích hợp linh kiện, máy tính ngày càng nhỏ gọn tiện lợi." },
+            { id: 21, level: "easy", q: "Trí tuệ nhân tạo (AI) được tích hợp mạnh mẽ vào thế hệ máy tính nào?", a: ["Thế hệ 2", "Thế hệ 3", "Thế hệ 4", "Thế hệ 5"], c: 3, e: "Thế hệ thứ 5 tập trung phát triển AI và xử lý thông minh." },
+            { id: 22, level: "easy", q: "Hành động nào thể hiện tôn trọng bản quyền thông tin số?", a: ["Ghi rõ nguồn khi trích dẫn", "Sao chép tự nhận của mình", "Xóa tên tác giả", "Chỉnh sửa bài đăng"], c: 0, e: "Trích dẫn rõ nguồn gốc là hành vi tôn trọng tác quyền." },
+            { id: 23, level: "easy", q: "Internet giúp học sinh học trực tuyến mọi lúc mọi nơi thuộc lĩnh vực nào?", a: ["Y tế", "Giáo dục", "Nông nghiệp", "Quốc phòng"], c: 1, e: "Học trực tuyến qua Internet là ứng dụng nổi bật trong Giáo dục." },
+            { id: 24, level: "easy", q: "Thiết bị trỏ (chuột) xuất hiện phổ biến từ thế hệ máy tính nào?", a: ["Thế hệ 1", "Thế hệ 2", "Thế hệ 3", "Thế hệ 4"], c: 3, e: "Thế hệ thứ 4 phát triển mạnh các giao diện đồ họa và chuột máy tính." },
+            { id: 25, level: "easy", q: "Nhà bác học Blaise Pascal chế tạo máy tính Pascaline vào năm nào?", a: ["1642", "1833", "1943", "1975"], c: 0, e: "Pascal sáng chế chiếc máy tính cơ khí Pascaline năm 1642." },
+            { id: 26, level: "easy", q: "Mục đích ban đầu của chiếc máy Pascaline là gì?", a: ["Dự báo thời tiết", "Giúp cha tính thuế", "Chơi game", "Viết thư"], c: 1, e: "Pascal tạo máy Pascaline để giúp cha tính toán thuế chính xác." },
+            { id: 27, level: "easy", q: "Tác hại của việc tin vào tin đồn chưa kiểm chứng trên mạng là gì?", a: ["Đưa ra quyết định sai lầm", "Giúp máy chạy nhanh hơn", "Tăng dung lượng ổ cứng", "Học giỏi hơn"], c: 0, e: "Tin tức giả mạo dễ dẫn đến hành vi và nhận thức sai lệch." },
+            { id: 28, level: "easy", q: "Một tệp văn bản .docx lưu trong máy tính thuộc loại dữ liệu nào?", a: ["Dữ liệu số", "Dữ liệu giấy", "Văn bản cơ học", "Bản thảo"], c: 0, e: "File .docx được lưu trữ dạng dãy bit số hóa." },
+            { id: 29, level: "easy", q: "Bàn phím và màn hình được dùng phổ biến từ thế hệ máy tính nào?", a: ["Thế hệ 1", "Thế hệ 2", "Thế hệ 3", "Thế hệ 5"], c: 2, e: "Thế hệ thứ 3 gắn liền với việc đưa bàn phím và màn hình vào sử dụng." },
+            { id: 30, level: "easy", q: "Thư điện tử (Email) lưu trữ dữ liệu chính ở đâu?", a: ["Trên máy chủ dịch vụ", "Trên thẻ đục lỗ", "Trong đĩa mềm cũ", "Không lưu"], c: 0, e: "Email được lưu trên đám mây / máy chủ của nhà cung cấp." },
+            { id: 31, level: "easy", q: "Đặc điểm đa dạng của thông tin số thể hiện ở dạng nào?", a: ["Chữ, ảnh, âm thanh, video", "Chỉ có chữ cái", "Chỉ có số nguyên", "Chỉ có bảng tính"], c: 0, e: "Thông tin số rất đa dạng gồm text, audio, video, image..." },
+            { id: 32, level: "easy", q: "Nguồn tin nào dưới đây chứa nhiều ý kiến chủ quan nhất?", a: ["Bài review phim cá nhân trên MXH", "Bản tin thời tiết", "Thống kê dân số", "Lịch thi đấu"], c: 0, e: "Bài review cá nhân thể hiện cảm xúc cá nhân chủ quan." },
+            { id: 33, level: "easy", q: "Mức độ tin cậy của thông tin phụ thuộc chủ yếu vào yếu tố nào?", a: ["Nguồn gốc và mục tiêu cung cấp", "Màu sắc bài viết", "Độ dài trang", "Số chữ cái"], c: 0, e: "Nguồn gốc và mục tiêu của bài viết quyết định độ tin cậy." },
+            { id: 34, level: "easy", q: "Để khai thác thông tin an toàn, em nên làm gì?", a: ["Bảo mật thông tin cá nhân", "Chia sẻ mật khẩu", "Bấm vào link lạ", "Tin mọi quảng cáo"], c: 0, e: "Bảo vệ thông tin cá nhân giúp truy cập Internet an toàn." },
+            { id: 35, level: "easy", q: "Máy tính điều khiển tự động ASCC (Harvard Mark I) hoàn thành năm nào?", a: ["1943", "1833", "1642", "1990"], c: 0, e: "Howard Aiken hoàn thành chế tạo máy Harvard Mark I năm 1943." },
+
+            // VỪA (Medium) - 35 câu
+            { id: 36, level: "medium", q: "Gottfried Leibniz đã cải tiến máy tính Pascaline để làm thêm phép tính nào?", a: ["Nhân và chia", "Căn bậc hai", "Lũy thừa", "Vi phân"], c: 0, e: "Leibniz giúp máy thực hiện được cả cộng, trừ, nhân, chia." },
+            { id: 37, level: "medium", q: "Thành phần cốt lõi của máy tính thế hệ thứ 3 (1965-1974) là gì?", a: ["Mạch tích hợp (IC)", "Bóng bán dẫn", "Đèn chân không", "Vi xử lý"], c: 0, e: "Thế hệ thứ ba chế tạo dựa trên mạch tích hợp IC." },
+            { id: 38, level: "medium", q: "Nguyên lý 'chương trình được lưu trữ' do ai đề xướng năm 1945?", a: ["John Von Neumann", "Charles Babbage", "Alan Turing", "Claude Shannon"], c: 0, e: "Von Neumann xây dựng nguyên lý hoạt động cho máy tính hiện đại." },
+            { id: 39, level: "medium", q: "Công nghệ mạch VLSI ở thế hệ thứ 4 tích hợp bao nhiêu linh kiện?", a: ["Hàng chục nghìn đến hàng triệu", "Hàng trăm", "Hàng chục", "Hàng tỷ"], c: 0, e: "Mạch VLSI tích hợp hàng chục nghìn đến hàng triệu linh kiện bán dẫn." },
+            { id: 40, level: "medium", q: "Chiếc máy vi tính đầu tiên tên Micral xuất hiện vào năm nào?", a: ["1973", "1943", "1988", "1995"], c: 0, e: "Micral ra đời năm 1973 là một trong những máy vi tính đầu tiên." },
+            { id: 41, level: "medium", q: "Bộ xử lý Intel 80386 SX ra mắt vào năm nào?", a: ["1988", "1973", "1995", "2000"], c: 0, e: "Intel ra mắt bộ vi xử lý 80386 SX năm 1988." },
+            { id: 42, level: "medium", q: "Khác biệt cơ bản giữa 'Sự kiện' và 'Ý kiến' là gì?", a: ["Sự kiện có tính khách quan và chứng cứ xác thực", "Ý kiến luôn đúng", "Sự kiện là cảm xúc", "Ý kiến có số liệu"], c: 0, e: "Sự kiện được xác minh bằng bằng chứng thực tế khách quan." },
+            { id: 43, level: "medium", q: "Tính thời sự của thông tin được đánh giá căn cứ vào đâu?", a: ["Thời điểm công bố thông tin", "Độ dài bài viết", "Số lượng hình ảnh", "Font chữ"], c: 0, e: "Thời điểm phát hành quyết định thông tin còn cập nhật hay đã lỗi thời." },
+            { id: 44, level: "medium", q: "Trang web lâu không cập nhật tin tức quá 10 năm thường gặp vấn đề gì?", a: ["Lỗi thời, thiếu tính thời sự", "Độ tin cậy cao nhất", "Tuyệt đối chính xác", "An toàn nhất"], c: 0, e: "Thông tin quá cũ sẽ mất đi giá trị thực tiễn." },
+            { id: 45, level: "medium", q: "Tin giả (Fake news) trên mạng xã hội thường có đặc điểm gì?", a: ["Mang tính lừa dối, đồn thổi thiếu căn cứ", "Được bộ GD&ĐT kiểm duyệt", "Có chứng cứ khoa học", "Luôn chuẩn xác"], c: 0, e: "Tin giả được cố tình thêu dệt nhằm gây hoang mang hoặc trục lợi." },
+            { id: 46, level: "medium", q: "Chiếc máy tính IBM System/360 thuộc thế hệ máy tính nào?", a: ["Thế hệ 3", "Thế hệ 1", "Thế hệ 2", "Thế hệ 4"], c: 0, e: "IBM System/360 đại diện tiêu biểu cho thế hệ máy tính thứ 3." },
+            { id: 47, level: "medium", q: "Bộ nhớ chính của máy tính thế hệ thứ nhất sử dụng thiết bị nào?", a: ["Trống từ", "Đĩa SSD", "Thẻ nhớ Flash", "Băng ruy-băng"], c: 0, e: "Thế hệ đầu tiên dùng trống từ (Magnetic drum) làm bộ nhớ." },
+            { id: 48, level: "medium", q: "Ưu điểm nổi bật của bóng bán dẫn so với đèn chân không là gì?", a: ["Nhỏ hơn, tỏa ít nhiệt, tiết kiệm điện", "To hơn và đắt hơn", "Chạy chậm hơn", "Dễ vỡ hơn"], c: 0, e: "Bóng bán dẫn có độ bền cao, kích thước nhỏ và ít tốn điện." },
+            { id: 49, level: "medium", q: "Vì sao thông tin từ blog cá nhân thường có độ tin cậy hạn chế?", a: ["Do người dùng tự do đăng theo quan điểm chủ quan", "Vì blog miễn phí", "Vì blog ít hình ảnh", "Vì blog load nhanh"], c: 0, e: "Blog thể hiện ý chí cá nhân không qua kiểm duyệt nghiêm ngặt." },
+            { id: 50, level: "medium", q: "Máy tính Minsk 22 đưa vào Việt Nam năm 1968 thuộc thế hệ mấy?", a: ["Thế hệ 2", "Thế hệ 1", "Thế hệ 3", "Thế hệ 4"], c: 0, e: "Minsk 22 chế tạo dựa trên bóng bán dẫn, thuộc thế hệ thứ 2." },
+            { id: 51, level: "medium", q: "Khi một bài đăng bị phát tán rộng trên mạng, hậu quả là gì?", a: ["Khó kiểm soát và khó xóa triệt để", "Tự động biến mất", "Không ai đọc", "Tự khóa tài khoản"], c: 0, e: "Tốc độ chia sẻ của môi trường số khiến thông tin khó thu hồi." },
+            { id: 52, level: "medium", q: "Theo kiến trúc Von Neumann, bộ xử lý lấy lệnh từ đâu để thực thi?", a: ["Từ bộ nhớ nạp từng lệnh một", "Từ bàn phím trực tiếp", "Từ loa", "Từ màn hình"], c: 0, e: "Lệnh được nạp tuần tự từ bộ nhớ vào bộ xử lý." },
+            { id: 53, level: "medium", q: "Công nghệ ULSI là viết tắt của thuật ngữ nào?", a: ["Ultra Large Scale Integration", "United Large Scale Integration", "Universal Large Scale Integration", "Ultra Low Speed Integration"], c: 0, e: "ULSI tức Mạch tích hợp cỡ siêu lớn ở thế hệ 5." },
+            { id: 54, level: "medium", q: "Máy tính ENIAC có thể thực hiện bao nhiêu phép cộng trong một giây?", a: ["5000 phép tính", "500 phép tính", "1 triệu phép tính", "100 phép tính"], c: 0, e: "ENIAC thực hiện được khoảng 5000 phép tính cộng/giây." },
+            { id: 55, level: "medium", q: "Chiếc máy Harvard Mark I thực hiện phép nhân mất khoảng bao lâu?", a: ["Khoảng 6 giây", "1 giây", "1 phút", "0.001 giây"], c: 0, e: "Harvard Mark I thực hiện phép cộng hết gần 1 giây, phép nhân hết 6 giây." },
+            { id: 56, level: "medium", q: "Máy tính IBM 7090 (thế hệ 2) tính được bao nhiêu phép tính/giây?", a: ["Khoảng 229 000", "5000", "10 triệu", "1000"], c: 0, e: "IBM 7090 có tốc độ khoảng 229 000 phép tính/giây." },
+            { id: 57, level: "medium", q: "Đặc điểm nào thể hiện phát biểu mang tính 'Ý kiến'?", a: ["Chứa nhận định chủ quan như 'Tôi cho rằng...'", "Có số liệu đo lường", "Có hình ảnh chứng minh", "Có quyết định pháp lý"], c: 0, e: "Nhận định cá nhân là ý kiến, không phải sự kiện khách quan." },
+            { id: 58, level: "medium", q: "Quảng cáo sản phẩm trên mạng thường có nguy cơ gì?", a: ["Phóng đại lợi ích để bán hàng", "Cung cấp giá gốc", "Luôn chính xác 100%", "Do bộ Y tế viết"], c: 0, e: "Thông tin quảng cáo thường tô hồng công dụng nhằm thu lợi nhuận." },
+            { id: 59, level: "medium", q: "Kỹ thuật xử lý song song trong máy tính thế hệ 5 giúp ích gì?", a: ["Tăng tốc độ và hiệu suất tính toán", "Làm máy nặng hơn", "Giảm số lượng vi xử lý", "Tốn điện hơn"], c: 0, e: "Xử lý song song cho phép thực hiện nhiều tác vụ cùng lúc." },
+            { id: 60, level: "medium", q: "Năm 1975 khi đất nước thống nhất, Việt Nam có máy tính thế hệ mấy?", a: ["Thế hệ 2 và 3", "Chưa có máy tính", "Thế hệ 5", "Thế hệ 1"], c: 0, e: "Việt Nam khi đó đã tiếp quản các máy tính thế hệ 2 và 3 (như IBM 360, Minsk)." },
+            { id: 61, level: "medium", q: "Nhà khoa học Claude Shannon ứng dụng linh kiện nào để thao tác dây bit?", a: ["Rơ-le điện từ", "Trống từ", "Sợi quang", "Bánh răng"], c: 0, e: "Claude Shannon chứng minh rơ-le có thể thực hiện đại số Boole trên bit." },
+            { id: 62, level: "medium", q: "Tại sao máy tính Babbage không thể hoàn thành ở thế kỷ 19?", a: ["Công nghệ cơ khí thời đó chưa đáp ứng được", "Ông không có ý tưởng", "Bị cấm chế tạo", "Thiếu điện năng"], c: 0, e: "Kỹ thuật cơ khí chính xác thế kỷ 19 chưa đủ trình độ chế tạo." },
+            { id: 63, level: "medium", q: "Sự khác biệt khi chia sẻ ảnh số so với gửi ảnh in giấy là gì?", a: ["Người gửi vẫn giữ bản gốc, bản sao gửi đi", "Ảnh số bị mờ đi", "Gửi ảnh số tốn tiền tem", "Ảnh số không xem lại được"], c: 0, e: "Chia sẻ ảnh số thực chất là nhân bản file dữ liệu." },
+            { id: 64, level: "medium", q: "Ví dụ nào thể hiện sự thay đổi giáo dục nhờ công nghệ số?", a: ["Tra cứu thư viện điện tử trực tuyến", "Đọc sách giấy dưới đèn dầu", "Viết thư tay gửi bưu điện", "Dùng bảng đá"], c: 0, e: "Thư viện số giúp tìm kiếm kiến thức cực kỳ tiện lợi." },
+            { id: 65, level: "medium", q: "Khi gặp thông tin có dấu hiệu lừa đảo trên mạng, em nên làm gì?", a: ["Báo cáo (Report) vi phạm cho nền tảng", "Bấm thử vào link", "Chuyển tiếp cho người thân", "Nộp tiền theo yêu cầu"], c: 0, e: "Report giúp ngăn chặn kẻ xấu lan truyền chiêu trò lừa đảo." },
+            { id: 66, level: "medium", q: "Camera an ninh ở nơi công cộng hỗ trợ đắc lực cho mục tiêu nào?", a: ["Bảo vệ an toàn xã hội", "Dự báo thời tiết", "Sản xuất phần mềm", "Dạ hội âm nhạc"], c: 0, e: "Camera giám sát giúp duy trì an ninh trật tự xã hội." },
+            { id: 67, level: "medium", q: "Ứng dụng nào giúp chỉnh sửa dữ liệu hình ảnh số?", a: ["Phần mềm Photoshop / GIMP", "Thước kẻ", "Máy in", "Loa nghe nhạc"], c: 0, e: "Các phần mềm đồ họa giúp biên tập hình ảnh số." },
+            { id: 68, level: "medium", q: "Bộ nhớ RAM, ROM, đĩa SSD xuất hiện phổ biến từ thế hệ máy tính nào?", a: ["Thế hệ 4", "Thế hệ 1", "Thế hệ cơ khí", "Thế hệ 2"], c: 0, e: "Thế hệ thứ 4 đánh dấu sự bùng nổ của vi xử lý và bộ nhớ bán dẫn." },
+            { id: 69, level: "medium", q: "Khi đồng bộ dữ liệu tự động lên Cloud, nguy cơ tiềm ẩn là gì?", a: ["Dễ bị lộ thông tin nếu không bảo mật mật khẩu", "Mất kết nối điện", "Máy hỏng ngay", "Xóa hết file"], c: 0, e: "Lưu cloud cần bảo vệ tài khoản tốt để tránh lộ thông tin." },
+            { id: 70, level: "medium", q: "Dự án máy tính đa năng của Charles Babbage khởi động năm nào?", a: ["1833", "1642", "1943", "1900"], c: 0, e: "Năm 1833 Charles Babbage bắt đầu thiết kế Analytical Engine." },
+
+            // KHÓ (Hard - 30%) - 30 câu
+            { id: 71, level: "hard", q: "Ý tưởng thiết kế máy tính Analytical Engine của Babbage chứa thành phần nào tương đồng máy tính hiện đại?", a: ["Bộ lưu trữ (Store) và bộ tính toán (Mill)", "Bóng bán dẫn", "Mạch IC tích hợp", "Đèn chân không"], c: 0, e: "Babbage thiết kế 'Store' (Bộ nhớ) và 'Mill' (Bộ xử lý) giống hệt máy tính hiện đại." },
+            { id: 72, level: "hard", q: "Bản chất kĩ thuật của việc thu nhỏ vi xử lý qua các thế hệ là gì?", a: ["Tăng mật độ bóng bán dẫn trên một đơn vị diện tích chip", "Thay bằng dây đồng to hơn", "Dùng chất liệu gỗ", "Giảm tần số hoạt động"], c: 0, e: "Tăng mật độ transistor giúp chip xử lý nhanh hơn, nhỏ hơn và ít tốn điện hơn." },
+            { id: 73, level: "hard", q: "Đâu là nguyên nhân chính khiến thông tin trên mạng xã hội dễ bị tam sao thất bản?", a: ["Mọi người dễ dàng chỉnh sửa, cắt ghép rồi chia sẻ lại", "Do thuật toán tìm kiếm", "Do nhà mạng can thiệp", "Do máy tính tự đổi nội dung"], c: 0, e: "Khả năng can thiệp chỉnh sửa của người dùng khiến thông tin dễ gọt dũa sai lệch." },
+            { id: 74, level: "hard", q: "Tại sao thông tin dạng sự kiện lại có giá trị kiểm chứng cao hơn ý kiến?", a: ["Có thể đối chiếu trực tiếp với dữ liệu khách quan thực tế", "Vì sự kiện luôn do người nổi tiếng nói", "Vì sự kiện được viết bằng tiếng Anh", "Vì sự kiện dài hơn"], c: 0, e: "Sự kiện kiểm chứng được qua bằng chứng, đo lường hoặc tài liệu thực tế." },
+            { id: 75, level: "hard", q: "Điểm vượt trội của kiến trúc Von Neumann so với các máy tính cứng trước đó là gì?", a: ["Chương trình lưu trong bộ nhớ giúp thay đổi nhiệm vụ linh hoạt", "Không cần dùng điện", "Tốc độ ánh sáng", "Máy không bao giờ nóng"], c: 0, e: "Lưu chương trình trong bộ nhớ giúp máy chuyển đổi công việc mà không phải đấu lại dây." },
+            { id: 76, level: "hard", q: "Mạch tích hợp cỡ rất lớn (VLSI) khác với mạch tích hợp (IC) ở điểm nào?", a: ["Tích hợp mật độ linh kiện bán dẫn cao hơn gấp nhiều lần", "Dùng công nghệ đèn điện tử", "Chỉ chứa 10 bóng bán dẫn", "Không dùng silic"], c: 0, e: "VLSI nâng số lượng linh kiện trên một chip lên hàng chục ngàn đến hàng triệu." },
+            { id: 77, level: "hard", q: "Biểu hiện nào thể hiện rõ nhất về sự bùng nổ thông tin số?", a: ["Dung lượng dữ liệu toàn cầu tăng theo lũy thừa hàng năm", "Số lượng báo in tăng lên", "Sách giáo khoa dày hơn", "Bàn tính được sản xuất nhiều hơn"], c: 0, e: "Tốc độ tạo ra và lưu trữ dữ liệu số tăng trưởng bùng nổ toàn cầu." },
+            { id: 78, level: "hard", q: "Tại sao việc xác định 'thẩm quyền' của tác giả lại quyết định độ tin cậy của bài viết?", a: ["Tác giả có chuyên môn đúng lĩnh vực sẽ đưa ra thông tin chuẩn xác", "Tác giả giỏi sẽ viết chữ đẹp", "Tác giả có nhiều người theo dõi", "Tác giả dùng máy tính xịn"], c: 0, e: "Trình độ chuyên môn và uy tín của tác giả đảm bảo giá trị tri thức bài viết." },
+            { id: 79, level: "hard", q: "Mối liên hệ giữa định luật Moore và sự phát triển thế hệ máy tính thứ 4 là gì?", a: ["Số lượng bóng bán dẫn trên chip tăng gấp đôi sau khoảng 2 năm", "Tốc độ internet tăng gấp đôi mỗi tháng", "Giá máy tính tăng gấp đôi mỗi năm", "Kích thước màn hình giảm một nửa"], c: 0, e: "Định luật Moore dự đoán chính xác tốc độ phát triển mật độ transistor trên vi xử lý." },
+            { id: 80, level: "hard", q: "Thách thức lớn nhất đối với việc bảo vệ quyền tác giả trong môi trường số là gì?", a: ["Tính chất sao chép vô tính nhanh chóng và dễ phát tán qua mạng", "Giá sách in quá đắt", "Không ai biết chụp ảnh", "Máy tính bị khóa"], c: 0, e: "Copy-paste quá đơn giản khiến hành vi vi phạm bản quyền xảy ra diện rộng." },
+            { id: 81, level: "hard", q: "Trong quy trình đánh giá nguồn tin, tiêu chí 'Tính khách quan' yêu cầu điều gì?", a: ["Thông tin không bị chi phối bởi lợi ích cá nhân hay thiên vị", "Thông tin phải ngắn gọn", "Bài viết phải có màu xanh", "Phải viết bằng thơ"], c: 0, e: "Tính khách quan đảm bảo sự thật không bị bóp méo vì động cơ vụ lợi." },
+            { id: 82, level: "hard", q: "Tại sao máy tính điện tử thế hệ thứ nhất lại tiêu thụ rất nhiều điện năng?", a: ["Sử dụng hàng nghìn đèn chân không tỏa nhiệt rất lớn", "Dùng vi xử lý đời mới", "Do có màn hình màu lớn", "Do kết nối Wifi"], c: 0, e: "Hàng vạn bóng đèn chân không đốt nóng liên tục gây tốn điện và sinh nhiệt khổng lồ." },
+            { id: 83, level: "hard", q: "Sự ra đời của bộ vi xử lý (Microprocessor) năm 1971 tạo nên bước ngoặt gì?", a: ["Tích hợp toàn bộ CPU lên một chip duy nhất", "Lần đầu tiên có mạng Internet", "Thay thế con người hoàn toàn", "Phát minh ra bàn phím"], c: 0, e: "Intel 4004 gộp các thành phần xử lý chính vào một vi chip nhỏ bé." },
+            { id: 84, level: "hard", q: "Sự khác biệt về mục đích giữa tin tức báo chí chính thống và mạng xã hội là gì?", a: ["Báo chí phục vụ lợi ích công cộng, MXH thường câu tương tác", "Báo chí viết nhanh hơn", "MXH do nhà nước quản lý 100%", "Báo chí không cần kiểm duyệt"], c: 0, e: "Báo chí tuân thủ quy chuẩn đạo đức nghiêm ngặt, còn MXH dễ bị cuốn theo view." },
+            { id: 85, level: "hard", q: "Vì sao việc sử dụng thông tin số lỗi thời lại nguy hiểm trong y học?", a: ["Dẫn đến chẩn đoán và phác đồ điều trị sai gây nguy hiểm", "Làm máy tính bị virus", "Tốn tiền điện thoại", "Bị khóa tài khoản"], c: 0, e: "Y khoa cần cập nhật nghiên cứu mới nhất, dùng kiến thức cũ có thể hại bệnh nhân." },
+            { id: 86, level: "hard", q: "Mã hóa Base64 trong ứng dụng web có tác dụng chính là gì?", a: ["Bảo vệ cấu trúc dữ liệu tiếng Việt Unicode khi truyền tải", "Làm bài kiểm tra dễ hơn", "Tăng điểm học sinh", "Tự động sửa lỗi sai"], c: 0, e: "Base64 chuyển đổi dữ liệu thành dạng chuỗi an toàn, tránh lỗi ký tự Unicode." },
+            { id: 87, level: "hard", q: "Vai trò của rơ-le trong máy tính cơ-điện ASCC (Mark I) là gì?", a: ["Mở/ngắt dòng điện để đại diện cho trạng thái 0 và 1", "Làm mát máy tính", "In kết quả ra giấy", "Hiển thị màu sắc"], c: 0, e: "Rơ-le đóng vai trò công tắc điện tử sinh ra hai trạng thái logic." },
+            { id: 88, level: "hard", q: "Yếu tố nào giúp phân biệt một 'Tin đồn' với một 'Sự thật khoa học'?", a: ["Sự thật khoa học trải qua thực nghiệm chứng minh và phản biện", "Tin đồn có nhiều người nghe hơn", "Tin đồn đăng trên Youtube", "Không có khác biệt"], c: 0, e: "Tri thức khoa học đòi hỏi quy trình thực nghiệm nghiêm ngặt." },
+            { id: 89, level: "hard", q: "Lý do chính khiến việc gỡ bỏ hoàn toàn thông tin cá nhân trên Internet rất khó khăn?", a: ["Dữ liệu đã được lưu trữ/backup trên nhiều server toàn cầu", "Do không có nút Delete", "Do máy tính quá cũ", "Do mạng chạy chậm"], c: 0, e: "Cơ chế phân tán và lưu trữ đệm (cache) khiến dữ liệu tồn tại ở nhiều nơi." },
+            { id: 90, level: "hard", q: "Tại sao việc đọc nhiều nguồn tin trái chiều lại giúp nâng cao năng lực thông tin?", a: ["Giúp nhìn nhận vấn đề đa chiều và loại bỏ định kiến thiên vị", "Làm ta rối trí hơn", "Giúp thuộc lòng bài học", "Tăng tốc độ gõ máy"], c: 0, e: "Đọc đa chiều giúp phân tích khách quan và phát hiện lỗ hổng thông tin." },
+            { id: 91, level: "hard", q: "Cơ chế hoạt động của thuật toán lọc tin tức (Filter Bubble) trên MXH gây ra tác hại gì?", a: ["Người dùng chỉ nhìn thấy tin cùng quan điểm, gây bóp méo thực tế", "Làm hỏng màn hình", "Tốn nhiều dung lượng 4G", "Giảm tốc độ mạng"], c: 0, e: "Thuật toán giữ chân người dùng khiến họ rơi vào 'bong bóng thông tin' phiến diện." },
+            { id: 92, level: "hard", q: "Sự kết hợp giữa mạch ULSI và AI ở thế hệ thứ 5 mang lại khả năng gì?", a: ["Máy tính có thể tự học, nhận diện giọng nói và khuôn mặt", "Máy tự in sách giấy", "Máy chạy bằng xăng", "Máy tính tự biến hình"], c: 0, e: "Hạ tầng phần cứng cực mạnh giúp hiện thực hóa các mô hình AI phức tạp." },
+            { id: 93, level: "hard", q: "Hạn chế lớn nhất của bàn tính cổ đại so với máy tính cơ khí Pascaline là gì?", a: ["Bàn tính phụ thuộc vào trí nhớ và thao tác thủ công của con người", "Bàn tính đắt hơn", "Bàn tính nặng hơn", "Bàn tính dùng điện"], c: 0, e: "Bàn tính chỉ là công cụ hỗ trợ ghi nhớ, con người vẫn phải tự tính nhẩm." },
+            { id: 94, level: "hard", q: "Điểm khác biệt cơ bản giữa bộ nhớ RAM và bộ nhớ ROM là gì?", a: ["RAM mất dữ liệu khi tắt điện, ROM giữ nguyên dữ liệu", "RAM nhỏ hơn ROM", "ROM chạy nhanh hơn RAM", "RAM làm bằng giấy"], c: 0, e: "RAM là bộ nhớ truy xuất ngẫu nhiên khả biến, ROM là bộ nhớ chỉ đọc phi khả biến." },
+            { id: 95, level: "hard", q: "Nguyên nhân khiến 'Tin giả' lan truyền nhanh hơn 'Tin thật' trên mạng xã hội?", a: ["Tin giả thường giật gân, đánh vào cảm xúc kích động của con người", "Tin giả được nhà mạng tài trợ", "Tin giả ngắn hơn", "Tin thật bị cấm đăng"], c: 0, e: "Yếu tố giật gân kích thích tâm lý tò mò và chia sẻ tức thì của cộng đồng." },
+            { id: 96, level: "hard", q: "Sự phân hóa 3 mức độ (Dễ, Vừa, Khó) trong bài kiểm tra mang lại giá trị gì?", a: ["Đánh giá chính xác năng lực và phân loại trình độ học sinh", "Làm bài kiểm tra khó hơn", "Giảm thời gian làm bài", "Tăng số lượng câu hỏi"], c: 0, e: "Ma trận đề phân hóa giúp đo lường từ mức nhận biết đến vận dụng cao." },
+            { id: 97, level: "hard", q: "Vì sao các cơ quan nhà nước sử dụng tên miền đuôi .gov.vn có độ tin cậy cao?", a: ["Được pháp luật bảo hộ và kiểm duyệt danh tính nghiêm ngặt", "Vì tên miền này rẻ nhất", "Vì tên miền này ngắn nhất", "Vì ai cũng mua được"], c: 0, e: "Tên miền .gov.vn chỉ cấp cho các tổ chức chính quyền được xác minh." },
+            { id: 98, level: "hard", q: "Bản chất của phép toán logic trên các rơ-le điện trong máy tính là gì?", a: ["Chuyển đổi trạng thái đóng/mở mạch thành giá trị đúng/sai (1/0)", "Thay thế phép nhân bằng phép cộng", "Tự động phát ra âm thanh", "Tăng điện áp dòng điện"], c: 0, e: "Đại số Boole quy đổi việc đóng mở mạch thành logic nhị phân 0 và 1." },
+            { id: 99, level: "hard", q: "Tại sao việc kiểm tra thời điểm cập nhật thông tin lại quan trọng khi nghiên cứu khoa học?", a: ["Tri thức khoa học liên tục phát triển và phủ định các giả thuyết cũ", "Để biết tác giả bao nhiêu tuổi", "Để chọn màu sắc phù hợp", "Để tiết kiệm giấy in"], c: 0, e: "Khoa học luôn tiến hóa, phát minh mới có thể sửa đổi kết luận xưa cũ." },
+            { id: 100, level: "hard", q: "Trong thời đại số, 'Năng lực số' (Digital Literacy) quan trọng nhất ở kỹ năng nào?", a: ["Tư duy phản biện và đánh giá độ tin cậy của thông tin", "Kỹ năng chơi game", "Kỹ năng mua sắm online", "Kỹ năng quay video tiktok"], c: 0, e: "Tư duy phản biện giúp học sinh lọc bỏ thông tin rác và sử dụng tri thức an toàn." }
+        ];
+
+        // CẤU HÌNH VÀ BIẾN TRẠNG THÁI HỆ THỐNG
+        const ADMIN_PASSWORD_HASH = "minhtran"; // Mật khẩu quản trị cài đặt
+        const DEFAULT_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbytvcnTHmy-lUpgOctdGTHxCFP6ZAGUOWO_FevXXBjKYZe5kJtCXXtKHkPfxd_nDcgsXA/exec";
+
+        let appState = {
+            studentName: "",
+            studentClass: "",
+            selectedQuestions: [], // 25 câu hỏi ngẫu nhiên được phân hóa
+            userAnswers: {},       // { câu_index: đáp_án_index }
+            currentIdx: 0,
+            timerSeconds: 20 * 60, // 20 phút đếm ngược
+            timerInterval: null,
+            timeSpentSeconds: 0,
+            attemptCount: 1,
+            scriptUrl: DEFAULT_SCRIPT_URL
+        };
+
+        window.onload = function() {
+            // Khôi phục URL cấu hình từ localStorage nếu có
+            const savedUrl = localStorage.getItem("quiz_script_url_v2");
+            if (savedUrl) {
+                appState.scriptUrl = savedUrl;
+            }
+            document.getElementById("settings-url").value = appState.scriptUrl;
+        };
+
+        // Hàm trộn ngẫu nhiên mảng (Fisher-Yates Shuffle)
+        function shuffle(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // Chọn 25 câu hỏi ngẫu nhiên có phân hóa (30% Khó = 8 câu, 9 câu Vừa, 8 câu Dễ)
+        function select25RandomQuestions() {
+            const easyQs = QUESTION_BANK.filter(q => q.level === 'easy');
+            const mediumQs = QUESTION_BANK.filter(q => q.level === 'medium');
+            const hardQs = QUESTION_BANK.filter(q => q.level === 'hard');
+
+            // Lấy 8 Dễ + 9 Vừa + 8 Khó = 25 câu (Khó chiếm 8/25 = 32% ~ 30%)
+            const selectedEasy = shuffle(easyQs).slice(0, 8);
+            const selectedMedium = shuffle(mediumQs).slice(0, 9);
+            const selectedHard = shuffle(hardQs).slice(0, 8);
+
+            // Gộp lại và xáo trộn thứ tự các câu hỏi trong đề
+            const combined = [...selectedEasy, ...selectedMedium, ...selectedHard];
+            return shuffle(combined);
+        }
+
+        // Bắt đầu bài kiểm tra
+        function handleStartQuiz(e) {
+            e.preventDefault();
+            const name = document.getElementById("input-name").value.trim();
+            const className = document.getElementById("input-class").value.trim();
+
+            if (!name || !className) return;
+
+            appState.studentName = name;
+            appState.studentClass = className;
+
+            // Xử lý đếm số lần kiểm tra của học sinh này
+            const attemptKey = `quiz_attempts_v2_${name.toLowerCase()}_${className.toLowerCase()}`;
+            let prevAttempts = parseInt(localStorage.getItem(attemptKey) || "0");
+            appState.attemptCount = prevAttempts + 1;
+            localStorage.setItem(attemptKey, appState.attemptCount);
+
+            // Khởi tạo đề 25 câu ngẫu nhiên
+            appState.selectedQuestions = select25RandomQuestions();
+            appState.userAnswers = {};
+            appState.currentIdx = 0;
+            appState.timerSeconds = 20 * 60;
+            appState.timeSpentSeconds = 0;
+
+            // Hiển thị tên học sinh ở góc bên phải trên cùng
+            document.getElementById("badge-name").textContent = name;
+            document.getElementById("badge-class").textContent = "Lớp: " + className;
+            document.getElementById("student-badge").classList.remove("hidden");
+            document.getElementById("student-badge").classList.add("flex");
+
+            // Hiển thị đồng hồ đếm ngược
+            document.getElementById("header-timer").classList.remove("hidden");
+            document.getElementById("header-timer").classList.add("flex");
+
+            // Chuyển màn hình
+            document.getElementById("screen-start").classList.add("hidden");
+            document.getElementById("screen-quiz").classList.remove("hidden");
+
+            // Render giao diện câu hỏi đầu tiên
+            renderQuestionGrid();
+            renderCurrentQuestion();
+            startTimer();
+        }
+
+        // Đồng hồ đếm ngược 20 phút
+        function startTimer() {
+            clearInterval(appState.timerInterval);
+            updateTimerDisplay();
+
+            appState.timerInterval = setInterval(() => {
+                appState.timerSeconds--;
+                appState.timeSpentSeconds++;
+                updateTimerDisplay();
+
+                if (appState.timerSeconds <= 0) {
+                    clearInterval(appState.timerInterval);
+                    alert("Đã hết thời gian 20 phút! Bài kiểm tra sẽ tự động được nộp.");
+                    submitQuiz();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const mins = Math.floor(appState.timerSeconds / 60);
+            const secs = appState.timerSeconds % 60;
+            const formatted = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            document.getElementById("timer-display").textContent = formatted;
+        }
+
+        // Hiển thị câu hỏi hiện tại
+        function renderCurrentQuestion() {
+            const q = appState.selectedQuestions[appState.currentIdx];
+            const idx = appState.currentIdx;
+
+            // Cập nhật huy hiệu câu & độ khó
+            document.getElementById("question-badge").textContent = `Câu ${idx + 1}/25`;
+            
+            const diffBadge = document.getElementById("difficulty-badge");
+            if (q.level === "easy") {
+                diffBadge.className = "px-2.5 py-1 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold rounded-lg";
+                diffBadge.innerHTML = `<i class="fa-solid fa-circle text-[9px] mr-1"></i> Mức Dễ`;
+            } else if (q.level === "medium") {
+                diffBadge.className = "px-2.5 py-1 bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs font-bold rounded-lg";
+                diffBadge.innerHTML = `<i class="fa-solid fa-circle text-[9px] mr-1"></i> Mức Vừa`;
+            } else {
+                diffBadge.className = "px-2.5 py-1 bg-rose-500/20 text-rose-400 border border-rose-500/30 text-xs font-bold rounded-lg";
+                diffBadge.innerHTML = `<i class="fa-solid fa-circle text-[9px] mr-1"></i> Mức Khó`;
+            }
+
+            // Thanh tiến trình
+            const progressPercent = ((idx + 1) / 25) * 100;
+            document.getElementById("progress-bar-fill").style.width = `${progressPercent}%`;
+
+            // Nội dung câu hỏi
+            document.getElementById("question-text").textContent = `Câu ${idx + 1}: ${q.q}`;
+
+            // Render 4 đáp án A B C D chia thành 2 CỘT
+            const optionsContainer = document.getElementById("options-container");
+            optionsContainer.innerHTML = "";
+
+            const prefix = ["A", "B", "C", "D"];
+            q.a.forEach((optText, optIdx) => {
+                const isSelected = appState.userAnswers[idx] === optIdx;
+
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.onclick = () => selectAnswer(optIdx);
+                btn.className = `p-4 text-left rounded-xl border text-sm font-medium transition flex items-start space-x-3 cursor-pointer ${
+                    isSelected 
+                        ? 'bg-gradient-to-r from-indigo-900/50 to-slate-800 border-indigo-500 text-cyan-300 ring-2 ring-indigo-500/40 shadow-md' 
+                        : 'bg-slate-950/70 border-slate-800 hover:bg-slate-800/60 text-slate-200'
+                }`;
+
+                btn.innerHTML = `
+                    <span class="w-6 h-6 flex-shrink-0 rounded-lg ${isSelected ? 'bg-indigo-500 text-white font-black' : 'bg-slate-800 text-slate-400 border border-slate-700'} flex items-center justify-center font-bold text-xs mt-0.5">
+                        ${prefix[optIdx]}
+                    </span>
+                    <span class="leading-relaxed flex-grow text-sm">${optText}</span>
+                `;
+                optionsContainer.appendChild(btn);
+            });
+
+            // Cập nhật trạng thái nút Qua/Lại
+            document.getElementById("btn-prev").disabled = idx === 0;
+            document.getElementById("btn-prev").style.opacity = idx === 0 ? "0.4" : "1";
+
+            document.getElementById("btn-next").disabled = idx === 24;
+            document.getElementById("btn-next").style.opacity = idx === 24 ? "0.4" : "1";
+
+            // Cập nhật bảng nút câu hỏi bên phải
+            renderQuestionGrid();
+        }
+
+        // Chọn đáp án
+        function selectAnswer(optIdx) {
+            appState.userAnswers[appState.currentIdx] = optIdx;
+            renderCurrentQuestion();
+        }
+
+        // Điều hướng qua lại giữa các câu hỏi
+        function navigateQuestion(direction) {
+            const newIdx = appState.currentIdx + direction;
+            if (newIdx >= 0 && newIdx < 25) {
+                appState.currentIdx = newIdx;
+                renderCurrentQuestion();
+            }
+        }
+
+        function jumpToQuestion(idx) {
+            appState.currentIdx = idx;
+            renderCurrentQuestion();
+        }
+
+        // Render bảng 25 nút chọn câu hỏi bên phải
+        function renderQuestionGrid() {
+            const grid = document.getElementById("question-grid");
+            grid.innerHTML = "";
+
+            let answeredCount = 0;
+
+            for (let i = 0; i < 25; i++) {
+                const isAnswered = appState.userAnswers.hasOwnProperty(i);
+                if (isAnswered) answeredCount++;
+
+                const isCurrent = appState.currentIdx === i;
+
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.onclick = () => jumpToQuestion(i);
+                
+                let styleClasses = "w-full aspect-square rounded-lg font-bold text-xs transition flex items-center justify-center border ";
+                
+                if (isCurrent) {
+                    styleClasses += "bg-indigo-600 text-white border-indigo-400 ring-2 ring-indigo-400 shadow-lg shadow-indigo-600/30";
+                } else if (isAnswered) {
+                    styleClasses += "bg-cyan-600 text-white border-cyan-500 shadow-sm";
+                } else {
+                    styleClasses += "bg-slate-950 text-slate-400 border-slate-800 hover:bg-slate-800/80";
+                }
+
+                btn.className = styleClasses;
+                btn.textContent = i + 1;
+                grid.appendChild(btn);
+            }
+
+            document.getElementById("answered-count-text").textContent = answeredCount;
+        }
+
+        // Xác nhận nộp bài
+        function confirmSubmission() {
+            const count = Object.keys(appState.userAnswers).length;
+            document.getElementById("confirm-count").textContent = count;
+            document.getElementById("modal-confirm").classList.remove("hidden");
+        }
+
+        function closeConfirmModal() {
+            document.getElementById("modal-confirm").classList.add("hidden");
+        }
+
+        // Nộp bài kiểm tra & Tính điểm
+        function submitQuiz() {
+            closeConfirmModal();
+            clearInterval(appState.timerInterval);
+
+            // Ẩn màn hình làm bài, hiện màn hình kết quả
+            document.getElementById("screen-quiz").classList.add("hidden");
+            document.getElementById("header-timer").classList.add("hidden");
+            document.getElementById("screen-result").classList.remove("hidden");
+
+            // Tính số câu đúng & Điểm số (Thang điểm 10 chia đều 25 câu = 0.4 điểm/câu)
+            let correctCount = 0;
+            appState.selectedQuestions.forEach((q, idx) => {
+                if (appState.userAnswers[idx] === q.c) {
+                    correctCount++;
+                }
+            });
+
+            const score = (correctCount * 0.4).toFixed(1);
+            const minsSpent = Math.floor(appState.timeSpentSeconds / 60);
+            const secsSpent = appState.timeSpentSeconds % 60;
+            const timeTakenFormatted = `${minsSpent.toString().padStart(2, '0')}:${secsSpent.toString().padStart(2, '0')}`;
+            const sendTimeStr = new Date().toLocaleString('vi-VN');
+
+            // Cập nhật giao diện kết quả
+            document.getElementById("result-student-info").textContent = `Học sinh: ${appState.studentName} | Lớp: ${appState.studentClass}`;
+            document.getElementById("res-score").textContent = `${score} / 10`;
+            document.getElementById("res-correct").textContent = `${correctCount} / 25`;
+            document.getElementById("res-time").textContent = timeTakenFormatted;
+            document.getElementById("res-attempts").textContent = appState.attemptCount;
+
+            // Đánh giá danh hiệu hoàn thành
+            const rankBadge = document.getElementById("result-rank-badge");
+            if (score >= 9.0) {
+                rankBadge.innerHTML = `<i class="fa-solid fa-trophy mr-1.5 text-amber-400"></i> KẾT QUẢ XUẤT SẮC`;
+                if (typeof confetti === 'function') confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+            } else if (score >= 8.0) {
+                rankBadge.innerHTML = `<i class="fa-solid fa-medal mr-1.5 text-cyan-400"></i> KẾT QUẢ GIỎI`;
+                if (typeof confetti === 'function') confetti({ particleCount: 70, spread: 60, origin: { y: 0.6 } });
+            } else if (score >= 6.5) {
+                rankBadge.innerHTML = `<i class="fa-solid fa-star mr-1.5 text-emerald-400"></i> KẾT QUẢ KHÁ`;
+            } else {
+                rankBadge.innerHTML = `<i class="fa-solid fa-flag mr-1.5 text-indigo-400"></i> HOÀN THÀNH BÀI KIỂM TRA`;
+            }
+
+            // Render Chi tiết đáp án
+            renderReviewList();
+
+            // Mã hóa dữ liệu Base64 & gửi lên Google Sheet
+            postDataToGoogleSheet({
+                studentName: appState.studentName,
+                studentClass: appState.studentClass,
+                totalQuestions: 25,
+                correctCount: correctCount,
+                score: parseFloat(score),
+                timeTaken: timeTakenFormatted,
+                sendTime: sendTimeStr,
+                attemptCount: appState.attemptCount
+            });
+        }
+
+        // Hiển thị chi tiết đáp án sau khi nộp bài
+        function renderReviewList() {
+            const listContainer = document.getElementById("review-list");
+            listContainer.innerHTML = "";
+            const prefix = ["A", "B", "C", "D"];
+
+            appState.selectedQuestions.forEach((q, idx) => {
+                const userAns = appState.userAnswers[idx];
+                const isCorrect = userAns === q.c;
+
+                const item = document.createElement("div");
+                item.className = `p-4 rounded-xl border ${isCorrect ? 'bg-emerald-950/20 border-emerald-800/40' : 'bg-rose-950/20 border-rose-800/40'} space-y-2.5`;
+
+                let statusBadge = isCorrect 
+                    ? `<span class="px-2.5 py-1 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-lg text-xs font-bold"><i class="fa-solid fa-check mr-1"></i> Đúng (+0.4đ)</span>`
+                    : `<span class="px-2.5 py-1 bg-rose-500/20 text-rose-400 border border-rose-500/30 rounded-lg text-xs font-bold"><i class="fa-solid fa-xmark mr-1"></i> Sai (0đ)</span>`;
+
+                let userAnsText = userAns !== undefined ? `${prefix[userAns]}. ${q.a[userAns]}` : `<span class="italic text-slate-500">Chưa trả lời</span>`;
+                let correctAnsText = `${prefix[q.c]}. ${q.a[q.c]}`;
+
+                item.innerHTML = `
+                    <div class="flex justify-between items-start gap-2">
+                        <h4 class="font-semibold text-slate-100 text-sm leading-relaxed">Câu ${idx + 1}: ${q.q}</h4>
+                        ${statusBadge}
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs pt-1">
+                        <div class="p-2.5 rounded-xl ${isCorrect ? 'bg-emerald-900/25 text-emerald-300' : 'bg-rose-900/25 text-rose-300'}">
+                            <strong>Lựa chọn của bạn:</strong> ${userAnsText}
+                        </div>
+                        <div class="p-2.5 rounded-xl bg-slate-950 text-cyan-300 border border-slate-800">
+                            <strong>Đáp án đúng:</strong> ${correctAnsText}
+                        </div>
+                    </div>
+                    <div class="text-xs text-slate-400 italic pt-1 border-t border-slate-800/60">
+                        <i class="fa-solid fa-lightbulb text-amber-400 mr-1"></i> <strong>Giải thích:</strong> ${q.e}
+                    </div>
+                `;
+
+                listContainer.appendChild(item);
+            });
+        }
+
+        // Mã hóa Base64 an toàn cho tiếng Việt và POST lên Google Sheet
+        function postDataToGoogleSheet(dataPayload) {
+            const statusBox = document.getElementById("sheet-status");
+            statusBox.className = "inline-flex items-center px-4 py-2 rounded-xl text-xs font-semibold bg-slate-950 border border-slate-800 text-slate-300";
+            statusBox.innerHTML = `<i class="fa-solid fa-spinner animate-spin text-cyan-400 mr-2"></i><span>Đang mã hóa dữ liệu & gửi kết quả...</span>`;
+
+            try {
+                // Chuyển đối tượng JSON thành chuỗi
+                const jsonString = JSON.stringify(dataPayload);
+
+                // Mã hóa Base64 hỗ trợ UTF-8 (Tiếng Việt không bị lỗi font)
+                const encodedData = window.btoa(unescape(encodeURIComponent(jsonString)));
+
+                // Đóng gói payload chứa chuỗi mã hóa
+                const postBody = JSON.stringify({ data: encodedData });
+
+                fetch(appState.scriptUrl, {
+                    method: 'POST',
+                    mode: 'no-cors', // Cần thiết đối với Apps Script cross-origin
+                    headers: { 'Content-Type': 'application/json' },
+                    body: postBody
+                })
+                .then(() => {
+                    statusBox.className = "inline-flex items-center px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-950/60 border border-emerald-700/60 text-emerald-300";
+                    statusBox.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400 mr-2"></i><span>Kết quả đã mã hóa và lưu vào Google Sheet thành công!</span>`;
+                })
+                .catch(err => {
+                    console.error("Lỗi gửi dữ liệu:", err);
+                    statusBox.className = "inline-flex items-center px-4 py-2 rounded-xl text-xs font-semibold bg-rose-950/60 border border-rose-700/60 text-rose-300";
+                    statusBox.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-rose-400 mr-2"></i><span>Không thể kết nối lưu trữ!</span>`;
+                });
+
+            } catch (err) {
+                console.error("Lỗi mã hóa:", err);
+                statusBox.className = "inline-flex items-center px-4 py-2 rounded-xl text-xs font-semibold bg-rose-950/60 border border-rose-700/60 text-rose-300";
+                statusBox.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-rose-400 mr-2"></i><span>Lỗi mã hóa dữ liệu!</span>`;
+            }
+        }
+
+        // Làm lại bài kiểm tra
+        function restartQuiz() {
+            document.getElementById("screen-result").classList.add("hidden");
+            document.getElementById("screen-start").classList.remove("hidden");
+            document.getElementById("student-badge").classList.add("hidden");
+            document.getElementById("student-badge").classList.remove("flex");
+        }
+
+        // Quản lý Modal Cài Đặt (Mật khẩu: minhtran)
+        function openSettingsModal() {
+            document.getElementById("settings-password").value = "";
+            document.getElementById("password-error").classList.add("hidden");
+            document.getElementById("settings-auth-step").classList.remove("hidden");
+            document.getElementById("settings-config-step").classList.add("hidden");
+            document.getElementById("modal-settings").classList.remove("hidden");
+        }
+
+        function closeSettingsModal() {
+            document.getElementById("modal-settings").classList.add("hidden");
+        }
+
+        function verifyAdminPassword() {
+            const pass = document.getElementById("settings-password").value;
+            if (pass === ADMIN_PASSWORD_HASH) {
+                document.getElementById("settings-auth-step").classList.add("hidden");
+                document.getElementById("settings-config-step").classList.remove("hidden");
+            } else {
+                document.getElementById("password-error").classList.remove("hidden");
+            }
+        }
+
+        function saveSettings() {
+            const newUrl = document.getElementById("settings-url").value.trim();
+            if (newUrl) {
+                appState.scriptUrl = newUrl;
+                localStorage.setItem("quiz_script_url_v2", newUrl);
+                alert("Đã lưu URL Google Apps Script mới thành công!");
+                closeSettingsModal();
+            }
+        }
+    </script>
+</body>
+</html>
