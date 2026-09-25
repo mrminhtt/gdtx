@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Kiểm Tra Môn Tin Học 6</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Lexend', 'sans-serif'],
+                    },
+                    colors: {
+                        darkBg: '#0f172a',
+                        cardBg: '#1e293b',
+                        accentCyan: '#06b6d4',
+                        accentIndigo: '#6366f1',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0b0f19;
+            color: #f1f5f9;
+            font-family: 'Lexend', sans-serif;
+            user-select: none;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+        .glow-effect {
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.25);
+        }
+        .glow-effect-cyan {
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.25);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between text-slate-100">
+
+    <!-- TOP HEADER BAR -->
+    <header class="bg-slate-900/90 backdrop-blur border-b border-slate-800 sticky top-0 z-30 px-4 py-3 shadow-lg">
+        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-3">
+            <!-- Title -->
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-cyan-500 flex items-center justify-center text-white text-xl font-bold shadow-lg">
+                    <i class="fa-solid fa-laptop-code"></i>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-lg md:text-xl bg-gradient-to-r from-cyan-400 to-indigo-400 bg-clip-text text-transparent">
+                        BÀI KIỂM TRA TIN HỌC 6
+                    </h1>
+                    <p class="text-xs text-slate-400 font-medium">Chủ đề 1: Máy tính và Cộng đồng (Bài 1 & Bài 2)</p>
+                </div>
+            </div>
+
+            <!-- Student Info Displayed on Top Right (When Active) -->
+            <div id="topStudentInfo" class="hidden flex items-center space-x-3 bg-slate-800/80 px-4 py-2 rounded-xl border border-slate-700">
+                <div class="text-right">
+                    <div class="text-sm font-bold text-cyan-400" id="headerStudentName">--</div>
+                    <div class="text-xs text-slate-400" id="headerStudentClass">--</div>
+                </div>
+                <div class="w-9 h-9 rounded-full bg-indigo-900/80 border border-indigo-500 flex items-center justify-center text-indigo-300 font-bold">
+                    <i class="fa-solid fa-user-graduate"></i>
+                </div>
+            </div>
+
+            <!-- Settings Button (Password Protected) -->
+            <button onclick="openSettingsModal()" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all border border-slate-700" title="Cấu hình Google Sheet">
+                <i class="fa-solid fa-gear text-lg"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-7xl mx-auto w-full px-4 py-6 flex-grow">
+
+        <!-- SCREEN 1: PRE-TEST REGISTRATION FORM -->
+        <section id="welcomeScreen" class="max-w-2xl mx-auto my-8">
+            <div class="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 md:p-10 shadow-2xl glow-effect relative overflow-hidden">
+                <div class="absolute -top-10 -right-10 w-40 h-40 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-cyan-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div class="text-center mb-8">
+                    <span class="px-4 py-1.5 rounded-full bg-indigo-900/50 text-indigo-300 border border-indigo-700/50 text-xs font-bold tracking-wider uppercase inline-block mb-3">
+                        Thử Thách Khởi Động
+                    </span>
+                    <h2 class="text-2xl md:text-3xl font-extrabold text-white mb-2">Thông Tin Học Sinh</h2>
+                    <p class="text-slate-400 text-sm">Vui lòng nhập đầy đủ thông tin để bắt đầu bài kiểm tra 20 phút</p>
+                </div>
+
+                <form id="startForm" onsubmit="handleStartTest(event)" class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-300 mb-2">
+                            <i class="fa-solid fa-user text-indigo-400 mr-2"></i>Họ và Tên Học Sinh
+                        </label>
+                        <input type="text" id="inputName" required placeholder="Ví dụ: Nguyễn Văn An"
+                            class="w-full px-4 py-3.5 rounded-xl bg-slate-950 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 text-base md:text-lg transition-all">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-300 mb-2">
+                            <i class="fa-solid fa-users-line text-cyan-400 mr-2"></i>Lớp
+                        </label>
+                        <input type="text" id="inputClass" required placeholder="Ví dụ: 6A1"
+                            class="w-full px-4 py-3.5 rounded-xl bg-slate-950 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 text-base md:text-lg transition-all">
+                    </div>
+
+                    <!-- Rules Summary Box -->
+                    <div class="bg-slate-950/60 rounded-2xl p-4 border border-slate-800 space-y-2 text-sm text-slate-300">
+                        <div class="font-bold text-cyan-400 flex items-center mb-1">
+                            <i class="fa-solid fa-circle-info mr-2"></i> Quy định làm bài:
+                        </div>
+                        <ul class="space-y-1.5 text-xs md:text-sm text-slate-400 list-disc list-inside">
+                            <li>Bài kiểm tra gồm <strong class="text-white">20 câu hỏi ngẫu nhiên</strong> chọn từ 100 câu.</li>
+                            <li>Thời gian làm bài: <strong class="text-white">20 phút</strong> (có đồng hồ đếm ngược).</li>
+                            <li>Thang điểm tối đa: <strong class="text-white">10 điểm</strong> (0.5 điểm / câu).</li>
+                            <li>Bạn có thể chọn lại đáp án và di chuyển giữa các câu trước khi nộp.</li>
+                        </ul>
+                    </div>
+
+                    <button type="submit" 
+                        class="w-full py-4 rounded-2xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 text-white font-extrabold text-lg shadow-xl hover:shadow-cyan-500/20 transform hover:-translate-y-0.5 transition-all">
+                        BẮT ĐẦU BÀI KIỂM TRA <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- SCREEN 2: ACTIVE TEST INTERFACE -->
+        <section id="testScreen" class="hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                
+                <!-- Left/Main Column: Question area -->
+                <div class="lg:col-span-3 space-y-6">
+                    
+                    <!-- Question Card -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-8 shadow-2xl relative">
+                        
+                        <!-- Question Header Status -->
+                        <div class="flex justify-between items-center mb-6 border-b border-slate-800 pb-4">
+                            <div class="flex items-center space-x-3">
+                                <span class="px-3.5 py-1.5 rounded-xl bg-indigo-900/60 text-indigo-300 font-bold text-sm border border-indigo-700/50">
+                                    Câu <span id="currentQNum">1</span> / 20
+                                </span>
+                                <span class="text-xs text-slate-400 hidden sm:inline-block">Điểm mỗi câu: 0.5 điểm</span>
+                            </div>
+                            <span id="questionStatusBadge" class="text-xs font-semibold px-3 py-1 rounded-full bg-slate-800 text-slate-400 border border-slate-700">
+                                Chưa trả lời
+                            </span>
+                        </div>
+
+                        <!-- Question Content (Large typography) -->
+                        <div class="min-h-[100px] flex items-center mb-8">
+                            <h2 id="questionText" class="text-xl md:text-2xl font-bold text-slate-100 leading-relaxed">
+                                Đang tải nội dung câu hỏi...
+                            </h2>
+                        </div>
+
+                        <!-- Options Grid: Mandatory 2 Columns -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="optionsContainer">
+                            <!-- Option buttons injected dynamically -->
+                        </div>
+
+                        <!-- Next / Previous Controls -->
+                        <div class="flex justify-between items-center mt-8 pt-6 border-t border-slate-800">
+                            <button id="prevBtn" onclick="navigateQuestion(-1)" 
+                                class="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold border border-slate-700 transition-all flex items-center">
+                                <i class="fa-solid fa-chevron-left mr-2"></i> Câu trước
+                            </button>
+                            <button id="nextBtn" onclick="navigateQuestion(1)" 
+                                class="px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold shadow-lg transition-all flex items-center">
+                                Câu tiếp <i class="fa-solid fa-chevron-right ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Sidebar: Timer & Question Navigation Palette (Phần Lựa Chọn Câu Hỏi bên phải) -->
+                <div class="space-y-6 lg:sticky lg:top-20 self-start">
+                    
+                    <!-- Timer Widget -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 text-center shadow-xl">
+                        <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">
+                            <i class="fa-solid fa-clock text-cyan-400 mr-1.5"></i>Thời Gian Còn Lại
+                        </div>
+                        <div id="timerDisplay" class="text-3xl md:text-4xl font-extrabold text-cyan-400 tracking-wider font-mono">
+                            20:00
+                        </div>
+                    </div>
+
+                    <!-- Question Navigation Grid & Submission -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-xl">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-bold text-slate-200 text-sm flex items-center">
+                                <i class="fa-solid fa-table-cells text-cyan-400 mr-2"></i> Lựa chọn câu hỏi
+                            </h3>
+                            <span class="text-xs text-slate-400"><span id="answeredCount" class="text-cyan-400 font-bold">0</span>/20 đã làm</span>
+                        </div>
+
+                        <!-- 20 Question Buttons Palette -->
+                        <div id="questionPalette" class="grid grid-cols-5 gap-2.5 mb-6">
+                            <!-- Buttons 1-20 dynamically created -->
+                        </div>
+
+                        <!-- Legend -->
+                        <div class="grid grid-cols-2 gap-2 text-xs text-slate-400 mb-6 border-t border-b border-slate-800/80 py-3">
+                            <div class="flex items-center"><span class="w-3 h-3 rounded-full bg-slate-800 border border-slate-700 mr-2"></span>Chưa làm</div>
+                            <div class="flex items-center"><span class="w-3 h-3 rounded-full bg-cyan-600 mr-2"></span>Đã chọn</div>
+                            <div class="flex items-center"><span class="w-3 h-3 rounded-full bg-indigo-600 ring-2 ring-cyan-400 mr-2"></span>Đang xem</div>
+                        </div>
+
+                        <!-- Submit Button Right Under Palette -->
+                        <button onclick="confirmSubmitTest()" 
+                            class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-extrabold text-base shadow-lg hover:shadow-emerald-500/20 transition-all flex items-center justify-center">
+                            <i class="fa-solid fa-paper-plane mr-2"></i> NỘP BÀI KIỂM TRA
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SCREEN 3: TEST RESULTS & DETAILED ANSWER REVIEW -->
+        <section id="resultScreen" class="hidden max-w-4xl mx-auto space-y-8">
+            
+            <!-- Result Summary Card -->
+            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-10 shadow-2xl text-center relative overflow-hidden">
+                <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-cyan-500 via-indigo-500 to-emerald-500"></div>
+
+                <h2 class="text-2xl md:text-3xl font-extrabold text-white mb-2">KẾT QUẢ BÀI KIỂM TRA</h2>
+                <p class="text-slate-400 text-sm mb-6">Học sinh: <span id="resStudentName" class="text-cyan-400 font-bold">--</span> - Lớp: <span id="resStudentClass" class="text-cyan-400 font-bold">--</span></p>
+
+                <!-- Score Circle -->
+                <div class="w-36 h-36 mx-auto mb-6 rounded-full bg-slate-950 border-4 border-indigo-500/50 flex flex-col items-center justify-center glow-effect">
+                    <span id="scoreText" class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-300">0.0</span>
+                    <span class="text-xs text-slate-400 font-semibold uppercase mt-1">/ 10 ĐIỂM</span>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto text-left mb-6">
+                    <div class="bg-slate-950/70 p-3.5 rounded-2xl border border-slate-800">
+                        <div class="text-xs text-slate-400">Số câu đúng</div>
+                        <div id="resCorrectCount" class="text-xl font-bold text-emerald-400">0 / 20</div>
+                    </div>
+                    <div class="bg-slate-950/70 p-3.5 rounded-2xl border border-slate-800">
+                        <div class="text-xs text-slate-400">Tỷ lệ chính xác</div>
+                        <div id="resAccuracy" class="text-xl font-bold text-cyan-400">0%</div>
+                    </div>
+                    <div class="bg-slate-950/70 p-3.5 rounded-2xl border border-slate-800">
+                        <div class="text-xs text-slate-400">Thời gian làm bài</div>
+                        <div id="resTimeTaken" class="text-xl font-bold text-indigo-400">00:00</div>
+                    </div>
+                    <div class="bg-slate-950/70 p-3.5 rounded-2xl border border-slate-800">
+                        <div class="text-xs text-slate-400">Số lần kiểm tra</div>
+                        <div id="resAttemptCount" class="text-xl font-bold text-amber-400">1</div>
+                    </div>
+                </div>
+
+                <!-- Google Sheet Save Status Indicator -->
+                <div id="sheetStatus" class="p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs md:text-sm font-medium text-slate-400 inline-flex items-center max-w-md mx-auto">
+                    <i class="fa-solid fa-spinner fa-spin mr-2 text-cyan-400"></i> Đang tự động lưu kết quả vào Google Sheet...
+                </div>
+
+                <div class="mt-6 flex flex-wrap justify-center gap-4">
+                    <button onclick="restartQuiz()" class="px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white font-bold shadow-lg transition-all">
+                        <i class="fa-solid fa-rotate-right mr-2"></i> Làm Lại Bài Kiểm Tra
+                    </button>
+                </div>
+            </div>
+
+            <!-- Detailed Answers Review Header -->
+            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl">
+                <h3 class="text-xl font-bold text-white mb-4 flex items-center">
+                    <i class="fa-solid fa-list-check text-cyan-400 mr-3"></i> Bảng Chi Tiết Đáp Án Bài Làm
+                </h3>
+                <div id="answersReviewContainer" class="space-y-6">
+                    <!-- Reviewed questions inserted here -->
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900/80 border-t border-slate-800 py-4 text-center text-xs text-slate-500">
+        <p>Hệ Thống Kiểm Tra Trực Tuyến Môn Tin Học 6 - THCS</p>
+    </footer>
+
+    <!-- SETTINGS / ADMIN MODAL -->
+    <div id="settingsModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-8 max-w-lg w-full shadow-2xl relative">
+            <button onclick="closeSettingsModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <h3 class="text-xl font-bold text-white mb-6 flex items-center">
+                <i class="fa-solid fa-sliders text-indigo-400 mr-2"></i> Cấu Hình Lưu Kết Quả
+            </h3>
+
+            <div id="adminAuthBlock" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Mật khẩu Quản trị viên</label>
+                    <input type="password" id="adminPassInput" placeholder="Nhập mật khẩu..." 
+                        class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-indigo-500">
+                </div>
+                <button onclick="verifyAdminPassword()" class="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm">
+                    Xác Nhận Mật Khẩu
+                </button>
+            </div>
+
+            <div id="adminConfigBlock" class="hidden space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Google Apps Script Web App URL</label>
+                    <textarea id="scriptUrlInput" rows="3" 
+                        class="w-full p-3 rounded-xl bg-slate-950 border border-slate-700 text-slate-200 text-xs font-mono focus:outline-none focus:border-cyan-500"></textarea>
+                </div>
+                <div class="flex justify-end space-x-3">
+                    <button onclick="saveSettings()" class="px-5 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-sm">
+                        Lưu Cấu Hình
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONFIRM SUBMIT MODAL -->
+    <div id="confirmModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-md w-full shadow-2xl text-center space-y-4">
+            <div class="w-12 h-12 rounded-full bg-amber-900/50 text-amber-400 flex items-center justify-center text-2xl mx-auto border border-amber-700/50">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 class="text-lg font-bold text-white">Xác Nhận Nộp Bài Kiểm Tra?</h3>
+            <p id="confirmModalText" class="text-xs text-slate-300">Bạn vẫn còn câu chưa hoàn thành. Bạn có chắc chắn muốn nộp bài ngay không?</p>
+            <div class="flex space-x-3 pt-2">
+                <button onclick="closeConfirmModal()" class="flex-1 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-sm">
+                    Làm Tiếp
+                </button>
+                <button onclick="submitQuiz()" class="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm">
+                    Nộp Bài Ngay
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* =========================================================================
+         * 100 QUESTION POOL (TIN HỌC 6 - BÀI 1 & BÀI 2)
+         * ========================================================================= */
+        const QUESTION_POOL = [
+            { q: "Thông tin là gì?", options: ["A. Những gì đem lại hiểu biết cho con người", "B. Con số và chữ viết trên giấy", "C. Hình ảnh được lưu trong máy tính", "D. Âm thanh phát ra từ ti vi"], answer: 0 },
+            { q: "Dữ liệu là gì?", options: ["A. Hiểu biết của con người về thế giới", "B. Thông tin được ghi lên vật mang tin", "C. Khả năng suy luận của bộ não", "D. Quyết định đúng đắn của con người"], answer: 1 },
+            { q: "Vật mang tin là gì?", options: ["A. Bộ não con người", "B. Phương tiện dùng để lưu trữ và truyền tải thông tin", "C. Các phép tính toán trong máy tính", "D. Khả năng giao tiếp của con người"], answer: 1 },
+            { q: "Ví dụ nào sau đây là dữ liệu?", options: ["A. Hiểu biết về lịch sử Việt Nam", "B. Con số 40.000đ viết trên bảng gỗ", "C. Cảm giác vui mừng khi đạt điểm cao", "D. Ý định đi chơi cùng bạn bè"], answer: 1 },
+            { q: "Ví dụ nào sau đây là thông tin?", options: ["A. Bản tin dự báo thời tiết cho biết trời mưa", "B. Dòng chữ trong cuốn sách giáo khoa", "C. Tấm bảng gỗ treo trước cửa tiệm", "D. Tiếng còi xe ô tô vang lên trên đường"], answer: 0 },
+            { q: "Con người thu nhận thông tin trực tiếp bằng cách nào?", options: ["A. Nhờ các giác quan như mắt, tai, mũi, lưỡi, da", "B. Sử dụng máy tính điện tử", "C. Đọc tài liệu lưu trữ trên thẻ nhớ", "D. Sử dụng mạng Internet"], answer: 0 },
+            { q: "Quá trình xử lý thông tin của con người gồm mấy hoạt động cơ bản?", options: ["A. 2 hoạt động", "B. 3 hoạt động", "C. 4 hoạt động", "D. 5 hoạt động"], answer: 2 },
+            { q: "4 hoạt động cơ bản trong xử lý thông tin gồm những gì?", options: ["A. Nhìn, nghe, nói, viết", "B. Thu nhận, lưu trữ, xử lý, truyền thông tin", "C. Nhập, xuất, lưu trữ, xóa thông tin", "D. Đọc, hiểu, ghi nhớ, phát biểu"], answer: 1 },
+            { q: "Hoạt động nào dưới đây là hoạt động thu nhận thông tin?", options: ["A. Lắng nghe cô giáo giảng bài", "B. Ghi chép bài học vào vở", "C. Giải một bài toán khó", "D. Trả lời câu hỏi của thầy cô"], answer: 0 },
+            { q: "Hoạt động nào dưới đây là hoạt động lưu trữ thông tin?", options: ["A. Nhìn thấy đèn giao thông màu đỏ", "B. Chép bài trên bảng vào vở học tập", "C. Suy nghĩ câu trả lời cho bài tập", "D. Nói chuyện với bạn ngồi bên cạnh"], answer: 1 },
+            { q: "Hoạt động nào dưới đây là hoạt động xử lý thông tin?", options: ["A. Nghe tiếng trống trường báo hết giờ", "B. Đọc sách trong thư viện", "C. Tính nhẩm kết quả một phép tính", "D. Gửi email cho bạn thân"], answer: 2 },
+            { q: "Hoạt động nào dưới đây là hoạt động truyền thông tin?", options: ["A. Quan sát hình ảnh trong sách", "B. Bộ não ghi nhớ lịch học tuần tới", "C. Thuyết trình bài tập nhóm trước lớp", "D. Phân tích số liệu thống kê"], answer: 2 },
+            { q: "Tại sao con người cần có thông tin trong cuộc sống?", options: ["A. Để có hiểu biết và đưa ra các quyết định đúng đắn", "B. Để lưu trữ thật nhiều vào bộ nhớ máy tính", "C. Để thay thế các hoạt động chân tay", "D. Để giúp máy tính làm việc hiệu quả hơn"], answer: 0 },
+            { q: "Vật nào sau đây KHÔNG phải là vật mang tin?", options: ["A. Cuốn sách giáo khoa Tin học 6", "B. Thẻ nhớ micro SD 32GB", "C. Khả năng suy luận của bộ não", "D. Tờ báo in ngày hôm nay"], answer: 2 },
+            { q: "Máy tính gồm mấy thành phần cơ bản để xử lý thông tin?", options: ["A. 2 thành phần", "B. 3 thành phần", "C. 4 thành phần", "D. 5 thành phần"], answer: 2 },
+            { q: "4 thành phần chính của máy tính trong xử lý thông tin gồm?", options: ["A. Màn hình, bàn phím, chuột, loa", "B. Thiết bị vào, bộ nhớ, bộ xử lý, thiết bị ra", "C. Phần cứng, phần mềm, Internet, dữ liệu", "D. CPU, RAM, ổ cứng, màn hình"], answer: 1 },
+            { q: "Bàn phím và chuột máy tính đóng vai trò là thiết bị gì?", options: ["A. Thiết bị vào", "B. Thiết bị ra", "C. Bộ xử lý trung tâm", "D. Thiết bị lưu trữ"], answer: 0 },
+            { q: "Màn hình và máy in đóng vai trò là thiết bị gì?", options: ["A. Thiết bị vào", "B. Thiết bị ra", "C. Bộ nhớ trong", "D. Bộ xử lý"], answer: 1 },
+            { q: "Bộ phận nào được ví như 'bộ não' của máy tính?", options: ["A. Màn hình máy tính", "B. Bàn phím", "C. Bộ xử lý (CPU)", "D. Ổ đĩa cứng"], answer: 2 },
+            { q: "Bộ nhớ máy tính dùng để làm gì?", options: ["A. Thu nhận âm thanh và hình ảnh", "B. Lưu trữ thông tin và dữ liệu", "C. Hiển thị thông tin ra màn hình", "D. Truyền dữ liệu qua mạng Internet"], answer: 1 },
+            { q: "Ưu điểm nổi bật của máy tính trong xử lý thông tin là gì?", options: ["A. Xử lý nhanh, chính xác, lưu trữ lớn, làm việc bền bỉ", "B. Tự có cảm xúc như con người", "C. Không cần cắm nguồn điện vẫn chạy được", "D. Tự đưa ra suy luận không cần con người"], answer: 0 },
+            { q: "Dữ liệu có thể thể hiện dưới những dạng nào?", options: ["A. Văn bản, con số, hình ảnh, âm thanh", "B. Chỉ có số và chữ viết", "C. Chỉ có hình ảnh và video", "D. Chỉ có âm thanh"], answer: 0 },
+            { q: "Khi nghe tiếng chuông báo thức, bạn bật dậy. Tiếng chuông là gì?", options: ["A. Dữ liệu âm thanh thu nhận qua tai", "B. Vật mang tin", "C. Bộ nhớ của con người", "D. Quyết định xử lý"], answer: 0 },
+            { q: "Việc bạn quyết định bật dậy sau khi nghe báo thức được gọi là gì?", options: ["A. Hoạt động thu nhận", "B. Kết quả của quá trình xử lý thông tin", "C. Hoạt động lưu trữ", "D. Dữ liệu dạng văn bản"], answer: 1 },
+            { q: "Tấm biển báo giao thông cấm đi ngược chiều là gì?", options: ["A. Vật mang tin", "B. Bộ xử lý", "C. Thiết bị ra", "D. Bộ nhớ trong"], answer: 0 },
+            { q: "Thông tin thu được từ biển báo cấm đi ngược chiều là gì?", options: ["A. Biết không được đi vào đường đó", "B. Hình vẽ chiếc xe màu đỏ", "C. Tấm kim loại hình tròn", "D. Màu sơn trắng và đỏ"], answer: 0 },
+            { q: "Một chiếc thẻ nhớ nhỏ bằng đầu ngón tay có thể lưu lượng sách thế nào?", options: ["A. Chỉ lưu được 1 trang sách", "B. Lưu được hàng nghìn cuốn sách", "C. Không lưu được văn bản", "D. Chỉ lưu được 10 dòng chữ"], answer: 1 },
+            { q: "Thiết bị nào sau đây vừa hỗ trợ thu nhận vừa truyền thông tin?", options: ["A. Điện thoại thông minh kết nối Internet", "B. Chuột máy tính dây", "C. Bàn phím cơ", "D. Máy in màu"], answer: 0 },
+            { q: "Hành động xem dự báo thời tiết để mang theo ô thuộc dạng hoạt động nào?", options: ["A. Thông tin làm thay đổi hành động của con người", "B. Hoạt động lưu trữ tự động", "C. Hoạt động truyền dữ liệu qua cáp", "D. Xử lý dữ liệu không cần bộ não"], answer: 0 },
+            { q: "Thiết bị nào sau đây dùng để thu nhận hình ảnh vào máy tính?", options: ["A. Máy quét (Scanner) và Webcam", "B. Màn hình LCD", "C. Máy in laser", "D. Loa vi tính"], answer: 0 },
+            { q: "Thiết bị nào phát âm thanh từ máy tính ra bên ngoài?", options: ["A. Micro", "B. Loa (Speaker)", "C. Bàn phím", "D. Chuột"], answer: 1 },
+            { q: "Micro kết nối máy tính thuộc loại thiết bị nào?", options: ["A. Thiết bị vào (thu nhận âm thanh)", "B. Thiết bị ra (phát âm thanh)", "C. Bộ nhớ lưu trữ", "D. Bộ xử lý trung tâm"], answer: 0 },
+            { q: "Internet mang lại lợi ích gì trong xử lý thông tin?", options: ["A. Kết nối kho tri thức khổng lồ toàn cầu", "B. Thay thế hoàn toàn bộ não con người", "C. Tự động làm bài tập giúp học sinh", "D. Giúp máy tính làm việc không cần điện"], answer: 0 },
+            { q: "Sự hiểu biết đem lại từ thông tin phụ thuộc vào yếu tố nào?", options: ["A. Người tiếp nhận thông tin đó", "B. Kích thước của cuốn sách", "C. Độ sáng của màn hình", "D. Tốc độ của bàn phím"], answer: 0 },
+            { q: "Dòng chữ '16:00' trên tờ lịch biểu diễn điều gì?", options: ["A. Dữ liệu dạng văn bản/con số", "B. Thông tin về thời tiết", "C. Ý chí của con người", "D. Thiết bị vào của máy tính"], answer: 0 },
+            { q: "Nếu dữ liệu không đem lại hiểu biết cho người nhận thì sao?", options: ["A. Dữ liệu đó không trở thành thông tin với người đó", "B. Máy tính bị hỏng ngay lập tức", "C. Vật mang tin bị biến mất", "D. Dữ liệu biến thành bộ xử lý"], answer: 0 },
+            { q: "Trong máy tính, dữ liệu được lưu trữ dưới dạng nào?", options: ["A. Dãy bit gồm các kí tự 0 và 1", "B. Chữ viết tay", "C. Âm thanh tự nhiên", "D. Màu sắc nguyên bản"], answer: 0 },
+            { q: "Thao tác nào là thu nhận thông tin khi đọc báo?", options: ["A. Dùng mắt quan sát các dòng chữ và hình ảnh", "B. Tóm tắt nội dung bài báo vào sổ tay", "C. Suy ngẫm về thông điệp bài báo", "D. Kể lại bài báo cho bạn nghe"], answer: 0 },
+            { q: "Thao tác nào là xử lý thông tin khi đọc báo?", options: ["A. Quan sát bằng mắt", "B. Suy ngẫm và phân tích ý nghĩa bài báo", "C. Mua tờ báo tại sạp báo", "D. Chụp ảnh tờ báo bằng điện thoại"], answer: 1 },
+            { q: "Phương tiện nào lưu trữ thông tin lâu đời nhất của loài người?", options: ["A. Sách, giấy viết, hình khắc trên đá", "B. Ô đĩa cứng SSD", "C. Thẻ nhớ flash", "D. Đĩa quang CD-ROM"], answer: 0 },
+            { q: "Con người sử dụng giác quan nào để nhận biết mùi vị thức ăn?", options: ["A. Khứu giác (mũi) và Vị giác (lưỡi)", "B. Thính giác (tai)", "C. Thị giác (mắt)", "D. Xúc giác (da)"], answer: 0 },
+            { q: "Máy tính có thể thực hiện bao nhiêu phép tính trong một giây?", options: ["A. Vài trăm phép tính", "B. Hàng trăm tỷ phép tính", "C. Tối đa 100 phép tính", "D. Chỉ 1 phép tính"], answer: 1 },
+            { q: "Hoạt động nào thể hiện máy tính hỗ trợ trong giáo dục?", options: ["A. Học trực tuyến và tra cứu tài liệu học tập", "B. Tự động nấu ăn cho học sinh", "C. Thay thế hoàn toàn giáo viên", "D. Giúp học sinh không cần học bài"], answer: 0 },
+            { q: "Máy tính giúp ngành y tế trong công việc nào?", options: ["A. Chẩn đoán hình ảnh, quản lý hồ sơ bệnh án", "B. Thay thế thuốc chữa bệnh", "C. Tự chế tạo ra thực phẩm", "D. Làm sạch không khí bệnh viện"], answer: 0 },
+            { q: "Lợi ích của máy tính trong thương mại là gì?", options: ["A. Mua bán trực tuyến, thanh toán nhanh chóng", "B. Sản xuất ra hàng hóa tự nhiên", "C. Vận chuyển hàng hóa không cần xe", "D. Làm giảm giá thành sản phẩm về 0"], answer: 0 },
+            { q: "Bộ phận nào trong máy tính giúp lưu trữ dữ liệu tạm thời khi làm việc?", options: ["A. Bộ nhớ RAM", "B. Chuột máy tính", "C. Màn hình", "D. Máy in"], answer: 0 },
+            { q: "Đĩa cứng (HDD/SSD) thuộc thành phần nào của máy tính?", options: ["A. Bộ nhớ lưu trữ", "B. Thiết bị vào", "C. Thiết bị ra", "D. Bộ xử lý"], answer: 0 },
+            { q: "Khi bấm nút chụp ảnh trên điện thoại, ta đang làm hoạt động gì?", options: ["A. Thu nhận và lưu trữ thông tin hình ảnh", "B. Phát âm thanh ra ngoài", "C. Xóa dữ liệu cũ", "D. Truyền thông tin đi xa"], answer: 0 },
+            { q: "Bảng điểm lớp học dán trên bảng tin là gì?", options: ["A. Vật mang tin", "B. Bộ xử lý", "C. Dữ liệu âm thanh", "D. Quyết định học tập"], answer: 0 },
+            { q: "Nội dung các con số điểm số in trên bảng điểm là gì?", options: ["A. Dữ liệu", "B. Vật mang tin", "C. Thiết bị ra", "D. Máy tính"], answer: 0 },
+            { q: "Nêu ví dụ về thông tin giúp con người đảm bảo an toàn giao thông?", options: ["A. Quan sát thấy đèn đỏ nên dừng xe lại", "B. Nhìn thấy đường phố đông đúc", "C. Đọc tên con đường trên bản đồ", "D. Nghe nhạc khi đang đi xe"], answer: 0 },
+            { q: "Tại sao nói máy tính xử lý thông tin hiệu quả hơn con người?", options: ["A. Tốc độ cao, chính xác, không biết mệt mỏi", "B. Máy tính thông minh hơn con người", "C. Máy tính có thể tự nghĩ ra ý tưởng mới", "D. Máy tính không cần con người điều khiển"], answer: 0 },
+            { q: "Hình ảnh chụp X-quang trong y tế là dạng dữ liệu nào?", options: ["A. Dữ liệu hình ảnh", "B. Dữ liệu âm thanh", "C. Dữ liệu văn bản thuần túy", "D. Dữ liệu con số"], answer: 0 },
+            { q: "Âm thanh tim đập nghe qua ống nghe bác sĩ là gì?", options: ["A. Dữ liệu âm thanh giúp chẩn đoán bệnh", "B. Vật mang tin bằng nhựa", "C. Bộ xử lý của máy tính", "D. Thiết bị ra"], answer: 0 },
+            { q: "Khi bạn nghe bạn mình kể chuyện, bạn thân đóng vai trò gì?", options: ["A. Người truyền thông tin", "B. Vật mang tin điện tử", "C. Bộ xử lý trung tâm", "D. Thiết bị vào"], answer: 0 },
+            { q: "Nó được dùng để lưu trữ dữ liệu lâu dài ngay cả khi tắt máy:", options: ["A. Ổ cứng (SSD/HDD)", "B. Bộ nhớ RAM", "C. Màn hình", "D. Bàn phím"], answer: 0 },
+            { q: "Loại thiết bị nào cho phép nhập dữ liệu dạng chữ vào máy tính?", options: ["A. Bàn phím (Keyboard)", "B. Màn hình", "C. Loa", "D. Máy in"], answer: 0 },
+            { q: "Kính thực tế ảo (VR) thuộc loại thiết bị nào?", options: ["A. Thiết bị ra hiển thị không gian 3D", "B. Bộ nhớ ngoài", "C. Bộ xử lý trung tâm", "D. Bàn phím"], answer: 0 },
+            { q: "Thao tác gửi tin nhắn Zalo cho bạn bè thuộc hoạt động nào?", options: ["A. Truyền thông tin", "B. Thu nhận thông tin", "C. Lưu trữ thông tin", "D. Xử lý thông tin"], answer: 0 },
+            { q: "Thao tác đọc tin nhắn Zalo bạn gửi tới thuộc hoạt động nào?", options: ["A. Thu nhận thông tin", "B. Truyền thông tin", "C. Lưu trữ thông tin", "D. Xóa dữ liệu"], answer: 0 },
+            { q: "Thông tin có tầm quan trọng như thế nào đối với con người?", options: ["A. Đem lại hiểu biết và giúp hành động hiệu quả", "B. Làm cho con người phụ thuộc vào máy tính", "C. Chỉ có tác dụng trong học tập", "D. Không có vai trò quan trọng"], answer: 0 },
+            { q: "Một đĩa CD chứa các bài hát thiếu nhi là gì?", options: ["A. Vật mang tin chứa dữ liệu âm thanh", "B. Thiết bị vào của máy tính", "C. Bộ xử lý CPU", "D. Thông tin dự báo thời tiết"], answer: 0 },
+            { q: "Tiếng trống trường vang lên 3 hồi báo hiệu điều gì?", options: ["A. Thông tin báo giờ vào lớp hoặc ra về", "B. Dữ liệu hình ảnh", "C. Vật mang tin bằng gỗ", "D. Thiết bị ra của máy tính"], answer: 0 },
+            { q: "Dải màu trên cầu vồng sau mưa cung cấp dữ liệu dạng nào?", options: ["A. Dữ liệu hình ảnh / màu sắc", "B. Dữ liệu văn bản", "C. Dữ liệu con số", "D. Dữ liệu âm thanh"], answer: 0 },
+            { q: "Thiết bị quét mã vạch ở siêu thị thuộc loại thiết bị nào?", options: ["A. Thiết bị vào", "B. Thiết bị ra", "C. Bộ nhớ trong", "D. Bộ xử lý"], answer: 0 },
+            { q: "Biên lai thanh toán tiền điện lực in ra giấy là gì?", options: ["A. Vật mang tin chứa dữ liệu thanh toán", "B. Bộ nhớ RAM", "C. Thiết bị vào", "D. Bộ xử lý CPU"], answer: 0 },
+            { q: "Khả năng nhớ bài của học sinh để làm bài kiểm tra là hoạt động gì?", options: ["A. Lưu trữ và xử lý thông tin của bộ não", "B. Truyền thông tin ra bên ngoài", "C. Thu nhận thông tin qua bàn phím", "D. Tự động hóa quá trình"], answer: 0 },
+            { q: "Điều nào sau đây KHÔNG đúng về máy tính?", options: ["A. Máy tính có cảm xúc vui buồn như con người", "B. Máy tính tính toán rất nhanh", "C. Máy tính lưu trữ dữ liệu rất lớn", "D. Máy tính làm việc bền bỉ"], answer: 0 },
+            { q: "Tệp âm thanh `.mp3` lưu trên điện thoại là dữ liệu dạng nào?", options: ["A. Dữ liệu âm thanh", "B. Dữ liệu văn bản", "C. Dữ liệu hình ảnh", "D. Dữ liệu bảng tính"], answer: 0 },
+            { q: "Tệp hình ảnh `.jpg` chụp bài học là dữ liệu dạng nào?", options: ["A. Dữ liệu hình ảnh", "B. Dữ liệu âm thanh", "C. Dữ liệu số", "D. Vật mang tin"], answer: 0 },
+            { q: "Thao tác dịch một bài văn tiếng Anh sang tiếng Việt là gì?", options: ["A. Quá trình xử lý thông tin", "B. Quá trình thu nhận đơn thuần", "C. Hoạt động lưu trữ dữ liệu", "D. Thiết bị ra của máy tính"], answer: 0 },
+            { q: "Vật mang tin có vai trò gì trong đời sống?", options: ["A. Giúp lưu trữ và truyền tải thông tin đi xa", "B. Giúp máy tính chạy nhanh hơn", "C. Thay thế các giác quan con người", "D. Làm giảm dung lượng thông tin"], answer: 0 },
+            { q: "Con người xử lý thông tin nhờ bộ phận nào?", options: ["A. Bộ não", "B. Trái tim", "C. Đôi bàn tay", "D. Đôi mắt"], answer: 0 },
+            { q: "Thiết bị nào chuyển hình ảnh vẽ tay thành tệp trong máy tính?", options: ["A. Bảng vẽ điện tử / Máy quét", "B. Máy in", "C. Loa vi tính", "D. Màn hình"], answer: 0 },
+            { q: "Việc chép bài từ bảng vào vở giúp học sinh làm gì?", options: ["A. Lưu trữ thông tin để học sau này", "B. Truyền thông tin cho giáo viên", "C. Xóa bỏ dữ liệu cũ", "D. Thu nhận âm thanh"], answer: 0 },
+            { q: "Máy chiếu (Projector) trong lớp học thuộc loại thiết bị nào?", options: ["A. Thiết bị ra", "B. Thiết bị vào", "C. Bộ nhớ", "D. Bộ xử lý"], answer: 0 },
+            { q: "Tại sao thông tin đúng lại rất quan trọng?", options: ["A. Giúp con người đưa ra quyết định chính xác và hiệu quả", "B. Giúp tăng dung lượng ổ cứng", "C. Giúp máy tính không bị vi-rút", "D. Làm bài kiểm tra nhanh hơn"], answer: 0 },
+            { q: "Điều gì xảy ra nếu con người tiếp nhận thông tin sai lệch?", options: ["A. Đưa ra các hành động và quyết định sai lầm", "B. Bộ não hoạt động tốt hơn", "C. Dữ liệu tự động sửa đúng", "D. Máy tính ngắt kết nối"], answer: 0 },
+            { q: "Các con số ghi nhiệt độ cơ thể trên nhiệt kế là gì?", options: ["A. Dữ liệu dạng con số", "B. Quyết định uống thuốc", "C. Vật mang tin bằng thủy ngân", "D. Thiết bị vào của máy tính"], answer: 0 },
+            { q: "Biết mình bị sốt sau khi nhìn nhiệt kế 38.5°C là gì?", options: ["A. Thông tin thu nhận được", "B. Dữ liệu chưa xử lý", "C. Vật mang tin", "D. Thiết bị ra"], answer: 0 },
+            { q: "Sổ liên lạc điện tử gửi tin nhắn điểm số cho phụ huynh là hoạt động gì?", options: ["A. Truyền thông tin", "B. Xử lý đồ họa", "C. Thu nhận qua mắt", "D. Xóa dữ liệu"], answer: 0 },
+            { q: "Robot hút bụi cảm nhận vật cản để tránh thuộc hoạt động nào?", options: ["A. Thu nhận và xử lý thông tin cảm biến", "B. Lưu trữ sách báo", "C. Truyền âm thanh", "D. Gửi email"], answer: 0 },
+            { q: "Thiết bị nào vừa dùng để lưu trữ dữ liệu vừa dễ mang theo?", options: ["A. Ô đĩa USB / Thẻ nhớ", "B. Màn hình vi tính 27 inch", "C. Máy in đa năng", "D. Bộ xử lý CPU"], answer: 0 },
+            { q: "Dữ liệu thu được khi nghe radio là dạng nào?", options: ["A. Dữ liệu âm thanh", "B. Dữ liệu hình ảnh", "C. Dữ liệu văn bản", "D. Dữ liệu bảng số"], answer: 0 },
+            { q: "Trong máy tính, thiết bị nào thực hiện các phép tính toán?", options: ["A. Bộ xử lý (CPU)", "B. Chuột", "C. Bàn phím", "D. Tai nghe"], answer: 0 },
+            { q: "Màn hình cảm ứng trên điện thoại thuộc loại thiết bị nào?", options: ["A. Vừa là thiết bị vào vừa là thiết bị ra", "B. Chỉ là thiết bị vào", "C. Chỉ là thiết bị ra", "D. Bộ nhớ lưu trữ"], answer: 0 },
+            { q: "Nơi lưu trữ thông tin của chính con người là gì?", options: ["A. Bộ não", "B. Cuốn sổ tay", "C. Máy vi tính", "D. Điện thoại"], answer: 0 },
+            { q: "Vì sao dữ liệu cần được lưu trữ trên vật mang tin?", options: ["A. Để không bị mất đi và dùng lại khi cần", "B. Để bộ não không phải làm việc", "C. Để biến thành máy tính", "D. Để dữ liệu tự nhân bản"], answer: 0 },
+            { q: "Sách giáo khoa in giấy thuộc loại gì?", options: ["A. Vật mang tin", "B. Dữ liệu âm thanh", "C. Bộ xử lý CPU", "D. Thiết bị ra"], answer: 0 },
+            { q: "Kiến thức bài học học sinh tiếp thu được từ sách là gì?", options: ["A. Thông tin", "B. Dữ liệu", "C. Vật mang tin", "D. Thiết bị vào"], answer: 0 },
+            { q: "Khi quan sát bản đồ thời tiết, các biểu tượng đám mây, mặt trời là gì?", options: ["A. Dữ liệu hình ảnh", "B. Vật mang tin", "C. Thiết bị ra", "D. Bộ xử lý"], answer: 0 },
+            { q: "Biết được khu vực nào có mưa qua bản đồ thời tiết là gì?", options: ["A. Thông tin", "B. Dữ liệu", "C. Vật mang tin", "D. Tệp tin"], answer: 0 },
+            { q: "Sử dụng tai nghe (Headphone) giúp thu nhận dữ liệu dạng nào?", options: ["A. Dữ liệu âm thanh", "B. Dữ liệu văn bản", "C. Dữ liệu hình ảnh", "D. Dữ liệu mã vạch"], answer: 0 },
+            { q: "Các thao tác suy luận, so sánh của bộ não là hoạt động gì?", options: ["A. Xử lý thông tin", "B. Thu nhận thông tin", "C. Lưu trữ thông tin", "D. Truyền thông tin"], answer: 0 },
+            { q: "Khi gọi điện thoại nói chuyện với bạn, sóng điện thoại làm nhiệm vụ gì?", options: ["A. Truyền tải dữ liệu âm thanh", "B. Lưu trữ lâu dài", "C. Xử lý phép tính", "D. Thu nhận hình ảnh"], answer: 0 },
+            { q: "Camera an ninh ghi lại hình ảnh giao thông là hoạt động gì?", options: ["A. Thu nhận và lưu trữ thông tin hình ảnh", "B. Truyền tín hiệu loa", "C. Đưa ra quyết định phạt", "D. Xóa dữ liệu cũ"], answer: 0 },
+            { q: "Thiết bị nào giúp máy tính kết nối và trao đổi thông tin toàn cầu?", options: ["A. Thiết bị mạng (Router/Modem)", "B. Chuột không dây", "C. Máy in màu", "D. Tai nghe gaming"], answer: 0 },
+            { q: "Một bài văn được gõ vào máy tính được lưu trữ dưới dạng nào?", options: ["A. Tệp văn bản (dữ liệu văn bản)", "B. Tệp âm thanh", "C. Tệp hình ảnh", "D. Dữ liệu sóng radio"], answer: 0 },
+            { q: "Hoạt động nào KHÔNG phải là hoạt động xử lý thông tin?", options: ["A. Ngủ mơ không nhớ gì", "B. Đọc sách bài tập", "C. Nghe giảng bài", "D. Làm bài thi"], answer: 0 },
+            { q: "Kết quả bài kiểm tra 10 điểm mang lại thông tin gì cho em?", options: ["A. Biết mình đã nắm vững kiến thức bài học", "B. Tờ giấy kiểm tra có màu trắng", "C. Con số 10 viết bằng mực đỏ", "D. Chữ ký của thầy cô"], answer: 0 }
+        ];
+
+        /* =========================================================================
+         * GLOBAL APP STATE & CONSTANTS
+         * ========================================================================= */
+        const DEFAULT_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbytvcnTHmy-lUpgOctdGTHxCFP6ZAGUOWO_FevXXBjKYZe5kJtCXXtKHkPfxd_nDcgsXA/exec";
+        
+        let appState = {
+            studentName: "",
+            studentClass: "",
+            testQuestions: [], // 20 selected questions
+            userAnswers: Array(20).fill(null), // Indices 0..3 or null
+            currentIndex: 0,
+            timer: null,
+            secondsRemaining: 20 * 60, // 20 minutes
+            startTime: null,
+            endTime: null,
+            attemptCount: 1,
+            scriptUrl: localStorage.getItem("tin6_script_url") || DEFAULT_SCRIPT_URL
+        };
+
+        /* =========================================================================
+         * OBFUSCATION & SECURITY PAYLOAD ENCODER
+         * ========================================================================= */
+        function createEncryptedPayload(data) {
+            const jsonStr = JSON.stringify(data);
+            // Base64 + UTF-8 safe encoding
+            const b64 = btoa(encodeURIComponent(jsonStr).replace(/%([0-9A-F]{2})/g,
+                function toSolidBytes(match, p1) {
+                    return String.fromCharCode('0x' + p1);
+            }));
+            const ts = Date.now();
+            const salt = "MINHTRAN_SECURE_TIN6_" + ts;
+            const sig = btoa(salt + "_" + b64.length);
+            
+            return {
+                data: b64,
+                timestamp: ts,
+                signature: sig
+            };
+        }
+
+        /* =========================================================================
+         * HELPER FUNCTIONS
+         * ========================================================================= */
+        function shuffleArray(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function formatTime(seconds) {
+            const m = Math.floor(seconds / 60);
+            const s = seconds % 60;
+            return `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+        }
+
+        /* =========================================================================
+         * EVENT HANDLERS & NAVIGATION
+         * ========================================================================= */
+        function handleStartTest(e) {
+            e.preventDefault();
+            const name = document.getElementById("inputName").value.trim();
+            const cls = document.getElementById("inputClass").value.trim();
+
+            if (!name || !cls) return;
+
+            appState.studentName = name;
+            appState.studentClass = cls;
+
+            // Track attempts in localStorage
+            const storageKey = `tin6_attempts_${name.toLowerCase().replace(/\s+/g, '_')}_${cls.toLowerCase()}`;
+            let prevAttempts = parseInt(localStorage.getItem(storageKey) || "0");
+            appState.attemptCount = prevAttempts + 1;
+            localStorage.setItem(storageKey, appState.attemptCount);
+
+            // Update Header Info
+            document.getElementById("headerStudentName").innerText = name;
+            document.getElementById("headerStudentClass").innerText = "Lớp: " + cls;
+            document.getElementById("topStudentInfo").classList.remove("hidden");
+
+            // Pick 20 Random Questions safely from QUESTION_POOL
+            appState.testQuestions = shuffleArray(QUESTION_POOL).slice(0, 20);
+            appState.userAnswers = Array(20).fill(null);
+            appState.currentIndex = 0;
+            appState.secondsRemaining = 20 * 60;
+            appState.startTime = new Date();
+
+            // Switch Screen
+            document.getElementById("welcomeScreen").classList.add("hidden");
+            document.getElementById("testScreen").classList.remove("hidden");
+
+            // Render Palette & First Question
+            renderPalette();
+            renderQuestion(0);
+            startTimer();
+        }
+
+        function startTimer() {
+            clearInterval(appState.timer);
+            const timerDisplay = document.getElementById("timerDisplay");
+            
+            appState.timer = setInterval(() => {
+                appState.secondsRemaining--;
+                timerDisplay.innerText = formatTime(appState.secondsRemaining);
+
+                if (appState.secondsRemaining <= 180) { // < 3 minutes warning
+                    timerDisplay.classList.add("text-rose-500", "animate-pulse");
+                    timerDisplay.classList.remove("text-cyan-400");
+                }
+
+                if (appState.secondsRemaining <= 0) {
+                    clearInterval(appState.timer);
+                    alert("Đã hết thời gian làm bài (20 phút)! Hệ thống sẽ tự động nộp bài.");
+                    submitQuiz();
+                }
+            }, 1000);
+        }
+
+        function renderQuestion(index) {
+            appState.currentIndex = index;
+            const q = appState.testQuestions[index];
+
+            document.getElementById("currentQNum").innerText = index + 1;
+            document.getElementById("questionText").innerText = `${index + 1}. ${q.q}`;
+
+            // Status badge
+            const isAnswered = appState.userAnswers[index] !== null;
+            const statusBadge = document.getElementById("questionStatusBadge");
+            if (isAnswered) {
+                statusBadge.innerText = "Đã chọn đáp án";
+                statusBadge.className = "text-xs font-semibold px-3 py-1 rounded-full bg-cyan-950 text-cyan-300 border border-cyan-700/50";
+            } else {
+                statusBadge.innerText = "Chưa trả lời";
+                statusBadge.className = "text-xs font-semibold px-3 py-1 rounded-full bg-slate-800 text-slate-400 border border-slate-700";
+            }
+
+            // Options container (Mandatory 2 Columns layout)
+            const optContainer = document.getElementById("optionsContainer");
+            optContainer.innerHTML = "";
+
+            const selectedOpt = appState.userAnswers[index];
+
+            q.options.forEach((optText, optIdx) => {
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.onclick = () => selectOption(optIdx);
+
+                const isSelected = selectedOpt === optIdx;
+
+                btn.className = `p-4 rounded-2xl text-left border font-medium text-base md:text-lg transition-all flex items-center justify-between ${
+                    isSelected 
+                    ? "bg-gradient-to-r from-cyan-950 to-indigo-950 border-cyan-400 text-cyan-200 shadow-lg ring-2 ring-cyan-500/50" 
+                    : "bg-slate-950/80 border-slate-800 text-slate-200 hover:bg-slate-800/80 hover:border-slate-700"
+                }`;
+
+                btn.innerHTML = `
+                    <span class="flex-1 pr-2">${optText}</span>
+                    <span class="w-6 h-6 rounded-full border ${isSelected ? 'border-cyan-400 bg-cyan-500 text-slate-950' : 'border-slate-700 bg-slate-900'} flex items-center justify-center text-xs font-bold shrink-0">
+                        ${isSelected ? '<i class="fa-solid fa-check"></i>' : ''}
+                    </span>
+                `;
+
+                optContainer.appendChild(btn);
+            });
+
+            // Update Navigation Prev/Next state
+            document.getElementById("prevBtn").disabled = index === 0;
+            document.getElementById("prevBtn").style.opacity = index === 0 ? "0.4" : "1";
+
+            const nextBtn = document.getElementById("nextBtn");
+            if (index === 19) {
+                nextBtn.innerHTML = `Câu cuối <i class="fa-solid fa-flag-checkered ml-2"></i>`;
+            } else {
+                nextBtn.innerHTML = `Câu tiếp <i class="fa-solid fa-chevron-right ml-2"></i>`;
+            }
+
+            renderPalette();
+        }
+
+        function selectOption(optIdx) {
+            // Record user choice (Does NOT reveal correct/incorrect during test)
+            appState.userAnswers[appState.currentIndex] = optIdx;
+            renderQuestion(appState.currentIndex);
+            updateAnsweredCount();
+        }
+
+        function navigateQuestion(direction) {
+            const newIndex = appState.currentIndex + direction;
+            if (newIndex >= 0 && newIndex < 20) {
+                renderQuestion(newIndex);
+            }
+        }
+
+        function renderPalette() {
+            const palette = document.getElementById("questionPalette");
+            palette.innerHTML = "";
+
+            for (let i = 0; i < 20; i++) {
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.onclick = () => renderQuestion(i);
+
+                const isCurrent = appState.currentIndex === i;
+                const isAnswered = appState.userAnswers[i] !== null;
+
+                let bgClasses = "bg-slate-950 border-slate-800 text-slate-400";
+                if (isAnswered) {
+                    bgClasses = "bg-cyan-600 border-cyan-500 text-white font-bold";
+                }
+                if (isCurrent) {
+                    bgClasses += " ring-2 ring-indigo-400 border-indigo-300 font-extrabold scale-105 z-10";
+                }
+
+                btn.className = `h-10 rounded-xl border flex items-center justify-center text-sm transition-all ${bgClasses}`;
+                btn.innerText = i + 1;
+
+                palette.appendChild(btn);
+            }
+            updateAnsweredCount();
+        }
+
+        function updateAnsweredCount() {
+            const count = appState.userAnswers.filter(a => a !== null).length;
+            document.getElementById("answeredCount").innerText = count;
+        }
+
+        function confirmSubmitTest() {
+            const answeredCount = appState.userAnswers.filter(a => a !== null).length;
+            const modalText = document.getElementById("confirmModalText");
+
+            if (answeredCount < 20) {
+                modalText.innerText = `Bạn đã làm ${answeredCount}/20 câu. Còn ${20 - answeredCount} câu chưa chọn đáp án. Bạn có muốn nộp ngay không?`;
+            } else {
+                modalText.innerText = `Bạn đã hoàn thành tất cả 20 câu hỏi. Bạn đã sẵn sàng nộp bài kiểm tra chưa?`;
+            }
+
+            document.getElementById("confirmModal").classList.remove("hidden");
+        }
+
+        function closeConfirmModal() {
+            document.getElementById("confirmModal").classList.add("hidden");
+        }
+
+        /* =========================================================================
+         * SUBMISSION & SCORE CALCULATION
+         * ========================================================================= */
+        function submitQuiz() {
+            closeConfirmModal();
+            clearInterval(appState.timer);
+            appState.endTime = new Date();
+
+            // Calculate Score (10 points total, 0.5 points per correct question)
+            let correctCount = 0;
+            appState.testQuestions.forEach((q, idx) => {
+                if (appState.userAnswers[idx] === q.answer) {
+                    correctCount++;
+                }
+            });
+
+            const score = (correctCount * 0.5).toFixed(1);
+            const timeTakenSec = Math.max(1, Math.round((appState.endTime - appState.startTime) / 1000));
+            const timeTakenFormatted = formatTime(timeTakenSec);
+            const sendTimeStr = new Date().toLocaleString('vi-VN');
+
+            // Switch Screen
+            document.getElementById("testScreen").classList.add("hidden");
+            document.getElementById("resultScreen").classList.remove("hidden");
+
+            // Populate Results UI
+            document.getElementById("resStudentName").innerText = appState.studentName;
+            document.getElementById("resStudentClass").innerText = appState.studentClass;
+            document.getElementById("scoreText").innerText = score;
+            document.getElementById("resCorrectCount").innerText = `${correctCount} / 20`;
+            document.getElementById("resAccuracy").innerText = `${Math.round((correctCount / 20) * 100)}%`;
+            document.getElementById("resTimeTaken").innerText = timeTakenFormatted;
+            document.getElementById("resAttemptCount").innerText = appState.attemptCount;
+
+            // Render Detailed Answers Review
+            renderAnswersReview();
+
+            // Send payload to Google Sheets via Obfuscated Post
+            sendToGoogleSheet({
+                studentName: appState.studentName,
+                studentClass: appState.studentClass,
+                totalQuestions: 20,
+                correctCount: correctCount,
+                score: parseFloat(score),
+                timeTaken: timeTakenFormatted,
+                sendTime: sendTimeStr,
+                attemptCount: appState.attemptCount
+            });
+        }
+
+        function renderAnswersReview() {
+            const container = document.getElementById("answersReviewContainer");
+            container.innerHTML = "";
+
+            appState.testQuestions.forEach((q, idx) => {
+                const userChoice = appState.userAnswers[idx];
+                const isCorrect = userChoice === q.answer;
+
+                const card = document.createElement("div");
+                card.className = `p-5 rounded-2xl border ${
+                    isCorrect ? 'bg-slate-950/80 border-emerald-800/60' : 'bg-slate-950/80 border-rose-800/60'
+                }`;
+
+                let optionsHtml = "";
+                q.options.forEach((opt, oIdx) => {
+                    let optBg = "bg-slate-900 border-slate-800 text-slate-300";
+                    let badge = "";
+
+                    if (oIdx === q.answer) {
+                        optBg = "bg-emerald-950/90 border-emerald-500 text-emerald-200 font-bold";
+                        badge = `<span class="text-xs bg-emerald-600 text-white px-2 py-0.5 rounded-md ml-2">Đáp án đúng</span>`;
+                    } else if (oIdx === userChoice && !isCorrect) {
+                        optBg = "bg-rose-950/90 border-rose-500 text-rose-200 line-through";
+                        badge = `<span class="text-xs bg-rose-600 text-white px-2 py-0.5 rounded-md ml-2">Bạn đã chọn</span>`;
+                    }
+
+                    optionsHtml += `
+                        <div class="p-3 rounded-xl border text-sm flex items-center justify-between ${optBg}">
+                            <span>${opt}</span>
+                            ${badge}
+                        </div>
+                    `;
+                });
+
+                card.innerHTML = `
+                    <div class="flex items-start justify-between gap-3 mb-3">
+                        <h4 class="font-bold text-slate-100 text-base md:text-lg">
+                            Câu ${idx + 1}: ${q.q}
+                        </h4>
+                        <span class="px-3 py-1 rounded-full text-xs font-bold shrink-0 ${
+                            isCorrect ? 'bg-emerald-900/60 text-emerald-300 border border-emerald-700/50' : 'bg-rose-900/60 text-rose-300 border border-rose-700/50'
+                        }">
+                            ${isCorrect ? '+0.5 điểm' : '0 điểm'}
+                        </span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+                        ${optionsHtml}
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        /* =========================================================================
+         * GOOGLE SHEETS POST TRANSMISSION (WITH OBFUSCATED PAYLOAD)
+         * ========================================================================= */
+        function sendToGoogleSheet(payload) {
+            const statusDiv = document.getElementById("sheetStatus");
+            const scriptUrl = appState.scriptUrl;
+
+            if (!scriptUrl) {
+                statusDiv.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-400 mr-2"></i> Chưa cấu hình URL Google Sheet. Đã lưu kết quả tại máy học sinh.`;
+                return;
+            }
+
+            // Encode payload to avoid raw parameter inspection
+            const obfuscatedData = createEncryptedPayload(payload);
+
+            fetch(scriptUrl, {
+                method: "POST",
+                mode: "no-cors", // Required for Apps Script web apps cross-origin post
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(obfuscatedData)
+            })
+            .then(() => {
+                statusDiv.className = "p-3 rounded-xl bg-emerald-950/80 border border-emerald-700 text-xs md:text-sm font-medium text-emerald-300 inline-flex items-center max-w-md mx-auto";
+                statusDiv.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400 mr-2 text-base"></i> Đã lưu kết quả thành công vào Google Sheet!`;
+            })
+            .catch(err => {
+                console.error("Sheet post error:", err);
+                statusDiv.className = "p-3 rounded-xl bg-amber-950/80 border border-amber-700 text-xs md:text-sm font-medium text-amber-300 inline-flex items-center max-w-md mx-auto";
+                statusDiv.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-400 mr-2"></i> Không thể kết nối Sheet. Kết quả đã hiển thị trực tiếp.`;
+            });
+        }
+
+        function restartQuiz() {
+            document.getElementById("resultScreen").classList.add("hidden");
+            document.getElementById("welcomeScreen").classList.remove("hidden");
+            document.getElementById("topStudentInfo").classList.add("hidden");
+            document.getElementById("startForm").reset();
+        }
+
+        /* =========================================================================
+         * ADMIN CONFIG MODAL (PASSWORD: minhtran)
+         * ========================================================================= */
+        function openSettingsModal() {
+            document.getElementById("settingsModal").classList.remove("hidden");
+            document.getElementById("adminAuthBlock").classList.remove("hidden");
+            document.getElementById("adminConfigBlock").classList.add("hidden");
+            document.getElementById("adminPassInput").value = "";
+        }
+
+        function closeSettingsModal() {
+            document.getElementById("settingsModal").classList.add("hidden");
+        }
+
+        function verifyAdminPassword() {
+            const pass = document.getElementById("adminPassInput").value;
+            if (pass === "minhtran") {
+                document.getElementById("adminAuthBlock").classList.add("hidden");
+                document.getElementById("adminConfigBlock").classList.remove("hidden");
+                document.getElementById("scriptUrlInput").value = appState.scriptUrl;
+            } else {
+                alert("Mật khẩu không đúng! Vui lòng thử lại.");
+            }
+        }
+
+        function saveSettings() {
+            const url = document.getElementById("scriptUrlInput").value.trim();
+            if (url) {
+                appState.scriptUrl = url;
+                localStorage.setItem("tin6_script_url", url);
+                alert("Đã lưu cấu hình Google Web App Script URL thành công!");
+                closeSettingsModal();
+            }
+        }
+    </script>
+</body>
+</html>
